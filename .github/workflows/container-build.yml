@@ -58,7 +58,7 @@ jobs:
           set -x
           declare -a changed_images
           for image in ${{ steps.images.outputs.images }}; do
-            if [[ "${{ steps.changed_files.outputs.all }}" =~ $image ]]; then
+            if [[ "${{ steps.changed_files.outputs.all }}" =~ $image || "${{ steps.changed_files.outputs.all }}" =~ ".github/workflows/container-build" ]]; then
                if [[ ! "${changed_images[@]}" =~ $image ]]; then
                   changed_images+=("\"${image}\",");
                fi
