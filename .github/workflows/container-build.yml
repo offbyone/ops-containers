@@ -35,6 +35,7 @@ jobs:
         id: images
         shell: bash
         run: |
+          set -x
           declare -a images
           declare -a images_list
 
@@ -54,16 +55,13 @@ jobs:
         id: changed_images
         shell: bash
         run: |
+          set -x
           declare -a changed_images
           for image in ${{ steps.images.outputs.images }}; do
             if [[ "${{ steps.changed_files.outputs.all }}" =~ $image ]]; then
-              for file in ${{ env.MONITORED_FILES }}; do
-                  if [[ "${{ steps.changed_files.outputs.all }}" =~ $image/$file ]]; then
-                    if [[ ! "${changed_images[@]}" =~ $image ]]; then
-                      changed_images+=("\"${image}\",");
-                    fi
-                  fi
-              done
+               if [[ ! "${changed_images[@]}" =~ $image ]]; then
+                  changed_images+=("\"${image}\",");
+               fi
             fi
           done
 
@@ -85,7 +83,7 @@ jobs:
     strategy:
       matrix:
         image: ${{ fromJson(needs.discover.outputs.changed_images) }}
-        arch: ["aarch64", "amd64", "armhf", "armv7"]
+        arch: ["aarch64", "amd64", "armhf"]
 
     steps:
       - uses: actions/checkout@v3
@@ -115,7 +113,7 @@ jobs:
           context: ./${{ matrix.image }}
           platforms: linux/${{ matrix.arch }}
           builder: ${{ steps.buildx.outputs.name }}
-          push: false
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
