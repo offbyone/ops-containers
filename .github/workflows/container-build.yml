@@ -99,7 +99,7 @@ jobs:
       - uses: docker/metadata-action@v4
         id: meta
         with:
-          images: offbyone/sickchill
+          images: ghcr.io/offbyone/sickchill
           flavor: |
             latest=auto
           tags: |
