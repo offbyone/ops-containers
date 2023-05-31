@@ -1,6 +1,6 @@
 FROM debian:bookworm AS compile-image
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends gcc build-essential python-is-python3 python3-venv
+RUN apt-get install -y --no-install-recommends gcc build-essential python-is-python3 python3-venv python3-dev
 
 # prepare the supervisor venv
 RUN python -mvenv /app/supervisor && \
