@@ -2,7 +2,7 @@
 VENV_ROOT=$1
 shift
 
-if [ ! -d "$VENV_ROOT/bin/activate" ]; then
+if [ ! -f "$VENV_ROOT/bin/activate" ]; then
     echo '$1 must be an existing venv root' >&2
     exit 1
 fi
