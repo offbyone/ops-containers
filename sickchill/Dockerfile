@@ -47,7 +47,7 @@ RUN go build -v
 FROM debian:bookworm-slim AS runtime-image
 RUN apt-get update && \
     apt-get -y --no-install-recommends install curl \
-        ca-certificates && \
+        ca-certificates \
         python-is-python3 jq && \
     apt-get autoremove -y && \
     apt-get clean && \
