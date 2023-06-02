@@ -39,19 +39,16 @@ RUN . /root/.cargo/env && \
     python -mpip install --upgrade pip && \
     python -mpip install sickchill
 
+FROM golang:1.20 AS compile-proxy
+COPY proxy /usr/src/proxy
+WORKDIR /usr/src/proxy
+RUN go build -v
+
 FROM debian:bookworm-slim AS runtime-image
 RUN apt-get update && \
     apt-get -y --no-install-recommends install curl \
         ca-certificates && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg \
-       -o /usr/share/keyrings/tailscale-archive-keyring.gpg && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list \
-       -o /etc/apt/sources.list.d/tailscale.list && \
-    apt-get update && \
-    apt-get -y --no-install-recommends install \
-        tailscale python-is-python3 jq && \
-    apt-get purge -y curl \
-        ca-certificates && \
+        python-is-python3 jq && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -62,12 +59,13 @@ VOLUME /mnt/media
 
 COPY --from=compile-supervisor /app/supervisor /app/supervisor
 COPY --from=compile-sickchill  /app/sickchill  /app/sickchill
+COPY --from=compile-proxy      /usr/src/proxy/tailscale-named-proxy /usr/local/bin/tailscale-named-proxy
 
-COPY etc/supervisor /etc/supervisor
-COPY etc/supervised /etc/supervised
+COPY sickchill/etc/supervisor /etc/supervisor
+COPY sickchill/etc/supervised /etc/supervised
 RUN mkdir -p /etc/supervised/init.d && touch /etc/supervised/init.d/.keep
-COPY bin/init.sh /etc/supervised/bin/init.sh
-COPY bin/run-in-venv.sh /usr/local/bin/run-in-venv.sh
+COPY sickchill/bin/init.sh /etc/supervised/bin/init.sh
+COPY sickchill/bin/run-in-venv.sh /usr/local/bin/run-in-venv.sh
 
 CMD . /app/supervisor/bin/activate && \
     exec python /app/supervisor/bin/supervisord \

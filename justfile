@@ -1,0 +1,20 @@
+set dotenv-load
+
+build:
+    docker build -t ghcr.io/offbyone/sickchill:latest -f sickchill/Dockerfile .
+
+run: build
+    docker run --env TS_AUTH_KEY=$TS_AUTH_KEY --rm -it \
+        -v '/dev/net/tun:/dev/net/tun' --cap-add=NET_ADMIN --cap-add=NET_RAW \
+        -v tailscale-sickchill:/var/lib/tailscale \
+        -v blob-media:/mnt/media \
+        -v /Users/offby1/projects/home/containers/sickchill/sickchill-20230530005247/config.ini:/etc/sickchill/config.ini \
+        --name=sickchill ghcr.io/offbyone/sickchill:latest
+
+shell: build
+    docker run --env TS_AUTH_KEY=$TS_AUTH_KEY --rm -it \
+        -v '/dev/net/tun:/dev/net/tun' --cap-add=NET_ADMIN --cap-add=NET_RAW \
+        -v tailscale-sickchill:/var/lib/tailscale \
+        -v blob-media:/mnt/media \
+        -v /Users/offby1/projects/home/containers/sickchill/sickchill-20230530005247/config.ini:/etc/sickchill/config.ini \
+        --name=sickchill ghcr.io/offbyone/sickchill:latest /bin/bash

@@ -14,20 +14,6 @@ export PATH
 # start tailscale first
 supervisorctl start tailscaled
 
-if [[ $(/usr/bin/tailscale status --self --json | jq -r .Self.Online) != "true" ]]; then
-    if [ "${TS_AUTH_KEY}x" = "x" ]; then
-        s_die "TS_AUTH_KEY not set, can't continue"
-    fi
-
-    if [ "${TS_HOSTNAME}x" = "x" ]; then
-        s_die "TS_HOSTNAME not set, can't continue"
-    fi
-
-    /usr/bin/tailscale up --hostname="$TS_HOSTNAME" --auth-key="$TS_AUTH_KEY"
-else
-    echo "Tailscale is up and configured"
-fi
-
 shopt -s nullglob
 
 for init_check in /etc/supervised/init.d/*; do
