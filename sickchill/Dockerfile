@@ -48,7 +48,9 @@ FROM debian:bookworm-slim AS runtime-image
 RUN apt-get update && \
     apt-get -y --no-install-recommends install curl \
         ca-certificates \
-        python-is-python3 jq && \
+        python-is-python3 jq \
+        libxslt1.1 libxml2 \
+        && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
