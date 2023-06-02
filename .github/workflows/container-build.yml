@@ -110,7 +110,8 @@ jobs:
 
       - uses: docker/build-push-action@v4
         with:
-          context: ./${{ matrix.image }}
+          context: .
+          file: ${{ matrix.image }}/Dockerfile
           platforms: linux/${{ matrix.arch }}
           builder: ${{ steps.buildx.outputs.name }}
           push: true
