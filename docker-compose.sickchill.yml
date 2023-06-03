@@ -2,7 +2,7 @@
 version: "3.3"
 services:
   proxy:
-    image: offbyone/tailscale-proxy:edge
+    image: ghcr.io/offbyone/tailscale-proxy:edge
     links:
       - sickchill
     volumes:
@@ -11,7 +11,7 @@ services:
     env_file: .proxy.env
   sickchill:
     container_name: sickchill
-    image: offbyone/sickchill:edge
+    image: ghcr.io/offbyone/sickchill:edge
     ports:
       - "8080"
     volumes:
