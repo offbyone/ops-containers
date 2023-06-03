@@ -1,0 +1,35 @@
+---
+version: "3.3"
+services:
+  proxy:
+    image: offbyone/tailscale-proxy:edge
+    links:
+      - sickchill
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    command: /usr/local/bin/tailscale-named-proxy -state-dir=/var/lib/tailscale -hostname=${TS_HOSTNAME} -backend-addr=sickchill:8080 -use-https
+    env_file: .proxy.env
+  sickchill:
+    container_name: sickchill
+    image: offbyone/sickchill:edge
+    ports:
+      - "8080"
+    volumes:
+      - blob-media:/mnt/media
+      - sickchill-data:/var/lib/sickchill
+    restart: unless-stopped
+
+volumes:
+  tailscale-data:
+  blob-media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+  sickchill-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /var/lib/sickchill
+      o: bind

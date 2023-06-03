@@ -1,15 +1,3 @@
-FROM debian:bookworm AS compile-supervisor
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
-    # python virtualenv construction
-    python-is-python3 python3-venv
-
-# prepare the supervisor venv
-RUN python -mvenv /app/supervisor && \
-    . /app/supervisor/bin/activate && \
-    python -mpip install --upgrade pip && \
-    python -mpip install supervisor
-
 FROM debian:bookworm as compile-sickchill
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
@@ -39,37 +27,26 @@ RUN . /root/.cargo/env && \
     python -mpip install --upgrade pip && \
     python -mpip install sickchill
 
-FROM golang:1.20 AS compile-proxy
-COPY proxy /usr/src/proxy
-WORKDIR /usr/src/proxy
-RUN go build -v
-
 FROM debian:bookworm-slim AS runtime-image
-VOLUME /var/lib/tailscale
 VOLUME /var/lib/sickchill
 VOLUME /mnt/media
+EXPOSE 8080
 
-COPY --from=compile-supervisor /app/supervisor /app/supervisor
 COPY --from=compile-sickchill  /app/sickchill  /app/sickchill
-COPY --from=compile-proxy      /usr/src/proxy/tailscale-named-proxy /usr/local/bin/tailscale-named-proxy
-
-COPY sickchill/etc/supervisor /etc/supervisor
-COPY sickchill/etc/supervised /etc/supervised
-RUN mkdir -p /etc/supervised/init.d && touch /etc/supervised/init.d/.keep
-COPY sickchill/bin/init.sh /etc/supervised/bin/init.sh
-COPY sickchill/bin/run-in-venv.sh /usr/local/bin/run-in-venv.sh
 
 # Dependencies last, because I don't need them to set the rest up
 RUN apt-get update && \
-    apt-get -y --no-install-recommends install curl \
+    apt-get -y --no-install-recommends install \
         ca-certificates \
-        python-is-python3 jq \
+        python-is-python3 \
         libxslt1.1 libxml2 \
         && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-CMD . /app/supervisor/bin/activate && \
-    exec python /app/supervisor/bin/supervisord \
-    -c /etc/supervisor/supervisord.conf
+CMD . /app/sickchill/bin/activate && \
+    exec python -m SickChill \
+    --datadir=/var/lib/sickchill \
+    --config /var/lib/sickchill/config.ini \
+    --nolaunch --port 8080
