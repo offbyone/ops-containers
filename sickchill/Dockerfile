@@ -46,7 +46,7 @@ RUN go build -v
 
 FROM debian:bookworm-slim AS runtime-image
 VOLUME /var/lib/tailscale
-VOLUME /etc/sickchill
+VOLUME /var/lib/sickchill
 VOLUME /mnt/media
 
 COPY --from=compile-supervisor /app/supervisor /app/supervisor

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ ! -f /etc/sickchill/config.ini ]; then
-    echo "No config mounted for sickchill; mount a config directory in /etc/sickchill"
+if [ ! -f /var/lib/sickchill/config.ini ]; then
+    echo "No config mounted for sickchill; mount a config directory in /var/lib/sickchill"
     exit 1
 fi
 
