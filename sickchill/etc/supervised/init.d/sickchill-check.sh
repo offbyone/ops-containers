@@ -5,8 +5,6 @@ if [ ! -f /etc/sickchill/config.ini ]; then
     exit 1
 fi
 
-/usr/bin/tailscale serve https / http://127.0.0.1:8080
-
 supervisorctl start sickchill
 
 # docker volume create --name blob-media \
