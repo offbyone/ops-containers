@@ -45,16 +45,6 @@ WORKDIR /usr/src/proxy
 RUN go build -v
 
 FROM debian:bookworm-slim AS runtime-image
-RUN apt-get update && \
-    apt-get -y --no-install-recommends install curl \
-        ca-certificates \
-        python-is-python3 jq \
-        libxslt1.1 libxml2 \
-        && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 VOLUME /var/lib/tailscale
 VOLUME /etc/sickchill
 VOLUME /mnt/media
@@ -68,6 +58,17 @@ COPY sickchill/etc/supervised /etc/supervised
 RUN mkdir -p /etc/supervised/init.d && touch /etc/supervised/init.d/.keep
 COPY sickchill/bin/init.sh /etc/supervised/bin/init.sh
 COPY sickchill/bin/run-in-venv.sh /usr/local/bin/run-in-venv.sh
+
+# Dependencies last, because I don't need them to set the rest up
+RUN apt-get update && \
+    apt-get -y --no-install-recommends install curl \
+        ca-certificates \
+        python-is-python3 jq \
+        libxslt1.1 libxml2 \
+        && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 CMD . /app/supervisor/bin/activate && \
     exec python /app/supervisor/bin/supervisord \
