@@ -72,11 +72,11 @@ func main() {
 		log.Fatalf("couldn't parse backend address: %v", err)
 	}
 
-	proxy := httputil.NewSingleHostReverseProxy(url)
-	originalDirector := proxy.Director
-	proxy.Director = func(req *http.Request) {
-		originalDirector(req)
-		modifyRequest(req, localClient)
+	proxy := &httputil.ReverseProxy{
+		Rewrite: func(pr *httputil.ProxyRequest) {
+			rewriteRequestURL(pr.Out, url)
+			modifyRequest(pr.In, pr.Out, localClient)
+		},
 	}
 
 	var ln net.Listener
@@ -125,21 +125,66 @@ func main() {
 	log.Fatal(http.Serve(ln, proxy))
 }
 
-func modifyRequest(req *http.Request, localClient *tailscale.LocalClient) {
-	// with enable_login_token set to true, we get a cookie that handles
-	// auth for paths that are not /login
-	if req.URL.Path != "/login" {
-		return
+func rewriteRequestURL(req *http.Request, target *url.URL) {
+	targetQuery := target.RawQuery
+	req.URL.Scheme = target.Scheme
+	req.URL.Host = target.Host
+	req.URL.Path, req.URL.RawPath = joinURLPath(target, req.URL)
+	if targetQuery == "" || req.URL.RawQuery == "" {
+		req.URL.RawQuery = targetQuery + req.URL.RawQuery
+	} else {
+		req.URL.RawQuery = targetQuery + "&" + req.URL.RawQuery
 	}
+}
 
-	user, err := getTailscaleUser(req.Context(), localClient, req.RemoteAddr)
+func joinURLPath(a, b *url.URL) (path, rawpath string) {
+	if a.RawPath == "" && b.RawPath == "" {
+		return singleJoiningSlash(a.Path, b.Path), ""
+	}
+	// Same as singleJoiningSlash, but uses EscapedPath to determine
+	// whether a slash should be added
+	apath := a.EscapedPath()
+	bpath := b.EscapedPath()
+
+	aslash := strings.HasSuffix(apath, "/")
+	bslash := strings.HasPrefix(bpath, "/")
+
+	switch {
+	case aslash && bslash:
+		return a.Path + b.Path[1:], apath + bpath[1:]
+	case !aslash && !bslash:
+		return a.Path + "/" + b.Path, apath + "/" + bpath
+	}
+	return a.Path + b.Path, apath + bpath
+}
+
+func singleJoiningSlash(a, b string) string {
+	aslash := strings.HasSuffix(a, "/")
+	bslash := strings.HasPrefix(b, "/")
+	switch {
+	case aslash && bslash:
+		return a + b[1:]
+	case !aslash && !bslash:
+		return a + "/" + b
+	}
+	return a + b
+}
+
+func modifyRequest(in *http.Request, out *http.Request, localClient *tailscale.LocalClient) {
+	user, err := getTailscaleUser(in.Context(), localClient, in.RemoteAddr)
 	if err != nil {
 		log.Printf("error getting Tailscale user: %v", err)
 		return
 	}
 
-	req.Header.Set("X-Webauth-User", user.LoginName)
-	req.Header.Set("X-Webauth-Name", user.DisplayName)
+	out.Header.Set("X-Webauth-User", user.LoginName)
+	out.Header.Set("X-Webauth-Name", user.DisplayName)
+	out.Header.Set("X-Forwarded-Host", in.Host)
+	if in.TLS == nil {
+		out.Header.Set("X-Forwarded-Proto", "http")
+	} else {
+		out.Header.Set("X-Forwarded-Proto", "https")
+	}
 }
 
 func getTailscaleUser(ctx context.Context, localClient *tailscale.LocalClient, ipPort string) (*tailcfg.UserProfile, error) {
