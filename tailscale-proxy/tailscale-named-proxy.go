@@ -51,10 +51,10 @@ var (
 func main() {
 	flag.Parse()
 	if *hostname == "" || strings.Contains(*hostname, ".") {
-		log.Fatal("missing or invalid --hostname")
+		log.Fatal("missing or invalid -hostname")
 	}
 	if *backendAddr == "" {
-		log.Fatal("missing --backend-addr")
+		log.Fatal("missing -backend-addr")
 	}
 	ts := &tsnet.Server{
 		Dir:      *tailscaleDir,
@@ -171,20 +171,38 @@ func singleJoiningSlash(a, b string) string {
 }
 
 func modifyRequest(in *http.Request, out *http.Request, localClient *tailscale.LocalClient) {
+	if in.TLS == nil {
+		out.Header.Set("X-Forwarded-Proto", "http")
+	} else {
+		out.Header.Set("X-Forwarded-Proto", "https")
+	}
+
+	out.Header.Set("X-Real-Ip", in.RemoteAddr)
+
+	shost, sport, err := net.SplitHostPort(in.Host)
+	if err == nil {
+		out.Header.Set("X-Forwarded-Host", shost)
+		out.Header.Set("X-Forwarded-Port", sport)
+		out.Header.Set("Host", shost)
+	} else {
+		out.Header.Set("X-Forwarded-Host", in.Host)
+		out.Header.Set("Host", in.URL.Host)
+		if in.TLS == nil {
+			out.Header.Set("X-Forwarded-Port", "80")
+		} else {
+			out.Header.Set("X-Forwarded-Port", "443")
+		}
+	}
+
 	user, err := getTailscaleUser(in.Context(), localClient, in.RemoteAddr)
 	if err != nil {
 		log.Printf("error getting Tailscale user: %v", err)
 		return
 	}
 
+	/* neat idea, but probably not going to happen */
 	out.Header.Set("X-Webauth-User", user.LoginName)
 	out.Header.Set("X-Webauth-Name", user.DisplayName)
-	out.Header.Set("X-Forwarded-Host", in.Host)
-	if in.TLS == nil {
-		out.Header.Set("X-Forwarded-Proto", "http")
-	} else {
-		out.Header.Set("X-Forwarded-Proto", "https")
-	}
 }
 
 func getTailscaleUser(ctx context.Context, localClient *tailscale.LocalClient, ipPort string) (*tailcfg.UserProfile, error) {
