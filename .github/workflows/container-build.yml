@@ -133,8 +133,10 @@ jobs:
 
   merge:
     runs-on: ubuntu-latest
+    name: Merge the builds for ${{ matrix.image }}
     needs:
       - build
+      - discover
     strategy:
       matrix:
         image: ${{ fromJson(needs.discover.outputs.changed_images) }}
