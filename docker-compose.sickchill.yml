@@ -2,12 +2,12 @@
 version: "3.3"
 services:
   proxy:
-    image: ghcr.io/offbyone/tailscale-proxy:main
+    image: ghcr.io/offbyone/tailscale-reverse-proxy:main
     links:
       - sickchill
     volumes:
       - tailscale-data:/var/lib/tailscale
-    command: /usr/local/bin/tailscale-named-proxy -state-dir=/var/lib/tailscale -hostname=${TS_HOSTNAME} -backend-addr=sickchill:8080 -use-https
+    command: /usr/local/bin/tailscale-reverse-proxy -state-dir=/var/lib/tailscale -hostname=${TS_HOSTNAME} -backend-addr=sickchill:8080 -use-https
     env_file: .proxy.env
   sickchill:
     container_name: sickchill
