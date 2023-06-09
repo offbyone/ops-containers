@@ -22,10 +22,12 @@ RUN apt-get install -y --no-install-recommends \
     # python sources need these. Mainly sickchill
     python3-dev libffi-dev libxml2-dev libxslt-dev libssl-dev
 
+ADD requirements.txt /src/requirements.txt
+
 RUN . /root/.cargo/env && \
     . /app/sickchill/bin/activate && \
-    python -mpip install --upgrade pip && \
-    python -mpip install sickchill
+    python -mpip install --upgrade pip pip-tools && \
+    pip-sync /src/requirements.txt
 
 FROM debian:bookworm-slim AS runtime-image
 VOLUME /var/lib/sickchill
