@@ -11,7 +11,7 @@ services:
     env_file: .proxy.env
   sickchill:
     build:
-      context: ./sickchill
+      context: .
       dockerfile: Dockerfile.debug
     container_name: sickchill
     image: ghcr.io/offbyone/sickchill:main
