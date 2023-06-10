@@ -1,0 +1,37 @@
+---
+version: "3.4"
+services:
+  proxy:
+    image: ghcr.io/offbyone/tailscale-reverse-proxy:main
+    links:
+      - radarr
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    command: /usr/local/bin/tailscale-reverse-proxy -state-dir=/var/lib/tailscale -hostname=${TS_HOSTNAME} -backend-addr=radarr:8310 -use-https
+    env_file: .proxy.env
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    hostname: radarr
+    restart: unless-stopped
+    volumes:
+      - blob-media:/mnt/media
+      - radarr-config:/config
+    environment:
+      - PGID=1000
+      - PUID=1000
+
+volumes:
+  tailscale-data:
+  blob-media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+  radarr-config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /etc/radarr
+      o: bind
