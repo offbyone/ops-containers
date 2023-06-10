@@ -10,6 +10,9 @@ services:
     command: /usr/local/bin/tailscale-reverse-proxy -state-dir=/var/lib/tailscale -hostname=${TS_HOSTNAME} -backend-addr=sickchill:8080 -use-https
     env_file: .proxy.env
   sickchill:
+    build:
+      context: ./sickchill
+      dockerfile: Dockerfile.debug
     container_name: sickchill
     image: ghcr.io/offbyone/sickchill:main
     ports:
