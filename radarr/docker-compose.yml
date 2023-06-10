@@ -15,7 +15,7 @@ services:
     hostname: radarr
     restart: unless-stopped
     volumes:
-      - blob-media:/mnt/media
+      - blob-media:/media
       - radarr-config:/config
     environment:
       - PGID=1000
