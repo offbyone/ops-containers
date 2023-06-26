@@ -7,3 +7,12 @@ updates:
     directory: "/sickchill" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/sickchill"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/radarr"
+    schedule:
+      interval: "weekly"
+      
