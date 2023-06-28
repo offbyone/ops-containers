@@ -6,10 +6,10 @@ on:
   push:
     branches:
       - main
-    pull_request:
-      branches:
-        - main
-    workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -137,6 +137,7 @@ jobs:
     needs:
       - build
       - discover
+    if: github.event_name != 'pull_request'
     strategy:
       matrix:
         image: ${{ fromJson(needs.discover.outputs.changed_images) }}
