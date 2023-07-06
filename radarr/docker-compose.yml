@@ -10,7 +10,7 @@ services:
     command: /usr/local/bin/tailscale-reverse-proxy -state-dir=/var/lib/tailscale -hostname=${TS_HOSTNAME} -backend-addr=radarr:8310 -use-https
     env_file: .proxy.env
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:4.6.4.7568-ls178
     container_name: radarr
     hostname: radarr
     restart: unless-stopped
