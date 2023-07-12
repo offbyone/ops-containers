@@ -1,0 +1,37 @@
+---
+version: "3.4"
+services:
+  proxy:
+    image: ghcr.io/offbyone/tailscale-reverse-proxy:main
+    links:
+      - jackett
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    command: /usr/local/bin/tailscale-reverse-proxy -state-dir=/var/lib/tailscale -hostname=${TS_HOSTNAME} -backend-addr=jackett:9117 -use-https
+    env_file: .proxy.env
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    hostname: jackett
+    restart: unless-stopped
+    volumes:
+      - blob-media:/media
+      - jackett-config:/config
+    environment:
+      - PGID=1000
+      - PUID=1000
+
+volumes:
+  tailscale-data:
+  blob-media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+  jackett-config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /etc/jackett
+      o: bind
