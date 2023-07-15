@@ -20,8 +20,6 @@ services:
       context: .
       dockerfile: Dockerfile.debug
     image: ghcr.io/offbyone/sickchill:main
-    ports:
-      - "8080"
     volumes:
       - blob-media:/mnt/media
       - sickchill-data:/var/lib/sickchill
