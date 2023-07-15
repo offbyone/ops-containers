@@ -1,0 +1,44 @@
+---
+version: "3.7"
+services:
+  sidecar:
+    hostname: lidarr
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    command: tailscaled
+    env_file: .proxy.env
+    build:
+      context: ../sidecar/
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - lidarr-config:/config
+      - blob-media:/data
+    network_mode: "service:sidecar"
+    restart: unless-stopped
+
+volumes:
+  tailscale-data:
+  blob-media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+  lidarr-config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /etc/lidarr
+      o: bind
