@@ -19,13 +19,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.debug
-    container_name: sickchill
     image: ghcr.io/offbyone/sickchill:main
     ports:
       - "8080"
     volumes:
       - blob-media:/mnt/media
       - sickchill-data:/var/lib/sickchill
+    network_mode: "service:sidecar"
     restart: unless-stopped
 
 volumes:
