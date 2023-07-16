@@ -13,8 +13,7 @@ services:
     env_file: .proxy.env
     environment:
       - TS_SERVE_PORT=9117
-    build:
-      context: ../sidecar/
+    image: ghcr.io/offbyone/sidecar:latest
   jackett:
     image: lscr.io/linuxserver/jackett:latest
     network_mode: "service:sidecar"

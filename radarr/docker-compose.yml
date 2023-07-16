@@ -13,8 +13,7 @@ services:
     env_file: .proxy.env
     environment:
       - TS_SERVE_PORT=8310
-    build:
-      context: ../sidecar/
+    image: ghcr.io/offbyone/sidecar:latest
   radarr:
     image: lscr.io/linuxserver/radarr:4.6.4.7568-ls178
     network_mode: "service:sidecar"

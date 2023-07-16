@@ -13,8 +13,7 @@ services:
     env_file: .proxy.env
     environment:
       - TS_SERVE_PORT=8686
-    build:
-      context: ../sidecar/
+    image: ghcr.io/offbyone/sidecar:latest
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
