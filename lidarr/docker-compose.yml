@@ -27,6 +27,16 @@ services:
       - blob-media:/data
     network_mode: "service:sidecar"
     restart: unless-stopped
+  exporter:
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: lidarr
+    restart: unless-stopped
+    network_mode: "service:sidecar"
+    environment:
+      - PORT=9707
+      - URL=http://localhost:8686
+    # APIKEY must be set in here
+    env_file: .exportarr.env
 
 volumes:
   tailscale-data:

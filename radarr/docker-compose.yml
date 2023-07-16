@@ -25,6 +25,16 @@ services:
     environment:
       - PGID=1000
       - PUID=1000
+  exporter:
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: radarr
+    restart: unless-stopped
+    network_mode: "service:sidecar"
+    environment:
+      - PORT=9707
+      - URL=http://localhost:8310
+    # APIKEY must be set in here
+    env_file: .exportarr.env
 
 volumes:
   tailscale-data:
