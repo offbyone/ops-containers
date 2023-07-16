@@ -13,7 +13,7 @@ services:
     env_file: .proxy.env
     environment:
       - TS_SERVE_PORT=8080
-    image: ghcr.io/offbyone/sidecar:latest
+    image: ghcr.io/offbyone/sidecar:main
 
   sickchill:
     build:
