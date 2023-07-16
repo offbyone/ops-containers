@@ -48,6 +48,6 @@ volumes:
   lidarr-config:
     driver: local
     driver_opts:
-      type: cifs
-      device: //blob.lan.offby1.net/config/lidarr/
-      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10,nobrl
+      type: none
+      device: /etc/lidarr
+      o: bind
