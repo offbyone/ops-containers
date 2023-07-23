@@ -1,0 +1,54 @@
+---
+version: "3.4"
+services:
+  sidecar:
+    hostname: readarr
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    env_file: .proxy.env
+    environment:
+      - TS_SERVE_PORT=8787
+    image: ghcr.io/offbyone/sidecar:main
+
+  readarr:
+    image: cr.hotio.dev/hotio/readarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=Etc/UTC
+    volumes:
+      - readarr-config:/config
+      - blob-media:/data
+    network_mode: "service:sidecar"
+    restart: unless-stopped
+  exporter:
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: readarr
+    restart: unless-stopped
+    network_mode: "service:sidecar"
+    environment:
+      - PORT=9707
+      - URL=http://localhost:8686
+    # APIKEY must be set in here
+    env_file: .exportarr.env
+
+volumes:
+  tailscale-data:
+  blob-media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+  readarr-config:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/config/readarr/
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10,nobrl
