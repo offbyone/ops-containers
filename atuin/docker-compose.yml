@@ -1,0 +1,44 @@
+---
+version: "3.4"
+services:
+  sidecar:
+    hostname: atuin
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    env_file: .proxy.env
+    environment:
+      - TS_SERVE_PORT=8888
+    image: ghcr.io/offbyone/sidecar:main
+  atuin:
+    image: ghcr.io/ellie/atuin:main
+    network_mode: "service:sidecar"
+    restart: unless-stopped
+    volumes:
+      - atuin-config:/config
+    environment:
+      - PGID=1000
+      - PUID=1000
+  postgresql:
+    image: postgres:14
+    restart: unless-stopped
+    volumes: # Don't remove permanent storage for index database files!
+      - "atuin-data:/var/lib/postgresql/data/"
+    environment:
+      POSTGRES_USER: $ATUIN_DB_USERNAME
+      POSTGRES_PASSWORD: $ATUIN_DB_PASSWORD
+      POSTGRES_DB: atuin
+
+volumes:
+  tailscale-data:
+  atuin-data:
+  atuin-config:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/config/atuin/
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
