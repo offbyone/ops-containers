@@ -3,6 +3,7 @@ version: "3.4"
 services:
   sidecar:
     hostname: atuin
+    restart: unless-stopped
     volumes:
       - tailscale-data:/var/lib/tailscale
     devices:
@@ -15,9 +16,11 @@ services:
       - TS_SERVE_PORT=8888
     image: ghcr.io/offbyone/sidecar:main
   atuin:
-    image: ghcr.io/ellie/atuin:main
+    image: ghcr.io/atuinsh/atuin:16.0
     network_mode: "service:sidecar"
     restart: unless-stopped
+    depends_on:
+      - db
     command: server start
     volumes:
       - atuin-config:/config
