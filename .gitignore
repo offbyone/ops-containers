@@ -2,3 +2,4 @@
 docker-compose.void.yml
 /*/.proxy.env
 /*/.env
+/*/.exportarr.env
