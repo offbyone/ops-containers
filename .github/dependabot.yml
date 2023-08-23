@@ -15,4 +15,7 @@ updates:
     directory: "/radarr"
     schedule:
       interval: "weekly"
-      
+  - package-ecosystem: "docker"
+    directory: "/sidecar"
+    schedule:
+      interval: "daily"
