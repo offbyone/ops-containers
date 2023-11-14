@@ -16,7 +16,7 @@ services:
       - TS_SERVE_PORT=8888
     image: ghcr.io/offbyone/sidecar:main
   atuin:
-    image: ghcr.io/atuinsh/atuin:16.0
+    image: ghcr.io/atuinsh/atuin:17.0.0
     network_mode: "service:sidecar"
     restart: unless-stopped
     depends_on:
