@@ -37,16 +37,6 @@ services:
     # APIKEY must be set in here
     env_file: .exportarr.env
 
-  exporter:
-    image: ghcr.io/onedr0p/exportarr:latest
-    command: lidarr
-    restart: unless-stopped
-    environment:
-      - PORT=9707
-      - URL=http://localhost:8686
-    # APIKEY must be set in here
-    env_file: .exportarr.env
-
 volumes:
   tailscale-data:
   blob-media:
