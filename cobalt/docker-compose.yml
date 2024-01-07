@@ -11,8 +11,9 @@ services:
       - net_admin
       - sys_module
     env_file: .proxy.env
-    environment:
-      - TS_SERVE_PORT=9001
+    # not serving using the sidecar herlper, run ./setup-serve.sh instead
+    # environment:
+    #   - TS_SERVE_PORT=9001
     image: ghcr.io/offbyone/sidecar:main
     labels:
       - com.centurylinklabs.watchtower.scope=cobalt
@@ -21,22 +22,23 @@ services:
     image: ghcr.io/wukko/cobalt:7
     restart: unless-stopped
     container_name: cobalt-api
+    network_mode: service:sidecar
 
     init: true
 
     # if container doesn't run detached on your machine, uncomment the next line:
     #tty: true
 
-    ports:
-      - 9000:9000/tcp
-      # if you're using a reverse proxy, uncomment the next line:
-      #- 127.0.0.1:9000:9000
+    # ports:
+    #   - 9000:9000/tcp
+    #   # if you're using a reverse proxy, uncomment the next line:
+    #   #- 127.0.0.1:9000:9000
 
     environment:
       # replace apiURL with your instance's target url in same format
-      - apiURL=https://co.wuk.sh/
+      - apiURL=https://cobalt.camel-tortoise.ts.net/
       # replace apiName with your instance's distinctive name
-      - apiName=eu-nl
+      - apiName=cobalt-tailnet
       # if you want to use cookies when fetching data from services, uncomment the next line
       #- cookiePath=/cookies.json
       # see cookies_example.json for example file.
@@ -44,29 +46,30 @@ services:
       - com.centurylinklabs.watchtower.scope=cobalt
 
       # if you want to use cookies when fetching data from services, uncomment volumes and next line
-      #volumes:
-      #- ./cookies.json:/cookies.json
+    volumes:
+      - ./cookies.json:/cookies.json
 
   cobalt-web:
     image: ghcr.io/wukko/cobalt:7
     restart: unless-stopped
     container_name: cobalt-web
+    network_mode: service:sidecar
 
     init: true
 
     # if container doesn't run detached on your machine, uncomment the next line:
     #tty: true
 
-    ports:
-      - 9001:9001/tcp
-      # if you're using a reverse proxy, uncomment the next line:
-      #- 127.0.0.1:9001:9001
+    # ports:
+    #   - 9001:9001/tcp
+    #   # if you're using a reverse proxy, uncomment the next line:
+    #   #- 127.0.0.1:9001:9001
 
     environment:
       # replace webURL with your instance's target url in same format
-      - webURL=https://cobalt.tools/
+      - webURL=https://cobalt.camel-tortoise.ts.net/web/
       # replace apiURL with preferred api instance url
-      - apiURL=https://co.wuk.sh/
+      - apiURL=https://cobalt.camel-tortoise.ts.net/
 
     labels:
       - com.centurylinklabs.watchtower.scope=cobalt
@@ -78,3 +81,6 @@ services:
     command: --cleanup --scope cobalt --interval 900
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  tailscale-data:
