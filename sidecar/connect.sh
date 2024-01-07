@@ -9,12 +9,12 @@ if [ "${TS_SERVE_PORT:-xxx}" = "xxx" ]; then
     echo "Skipping serve status; using raw networking"
 else
     if [ "${TS_SERVE_HTTPS:-yes}" = "yes" ]; then
-        tailscale serve https / localhost:${TS_SERVE_PORT}
+        tailscale serve --yes --bg localhost:${TS_SERVE_PORT}
     fi
 
     if [ "${TS_SERVE_HTTP:-yes}" = "yes" ]; then
         # this is over the tailnet, so I'm fine with HTTP here too
-        tailscale serve http / localhost:${TS_SERVE_PORT}
+        tailscale serve --yes --bg --http 80 localhost:${TS_SERVE_PORT}
     fi
 fi
 
