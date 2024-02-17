@@ -127,7 +127,7 @@ jobs:
           touch "/tmp/digests-${{ matrix.image }}/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: digests-${{ matrix.image }}
           path: /tmp/digests-${{ matrix.image }}/*
@@ -147,7 +147,7 @@ jobs:
 
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: digests-${{ matrix.image }}
           path: /tmp/digests-${{ matrix.image }}
