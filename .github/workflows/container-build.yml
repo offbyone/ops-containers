@@ -99,7 +99,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/metadata-action@v4
+      - uses: docker/metadata-action@v5
         id: meta
         with:
           images: ghcr.io/offbyone/${{ matrix.image }}
@@ -155,7 +155,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ghcr.io/offbyone/${{ matrix.image }}
       - name: Log in to the Github Container registry
