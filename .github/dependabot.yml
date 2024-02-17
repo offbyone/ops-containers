@@ -23,3 +23,6 @@ updates:
       all:
         patterns:
           - "*"
+        exclude-patterns:
+          - "*upload-artifact"
+          - "*download-artifact"
