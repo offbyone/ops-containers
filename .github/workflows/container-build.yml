@@ -32,7 +32,7 @@ jobs:
       - name: Get Changed Files
         id: changed_files
         # pinning out of paranoia, this is the modern-node fork of jitterbit/get-changed-files
-        uses: masesgroup/retrieve-changed-files@076a92699259d81d1c607bd91f0e1e9d45fd3151
+        uses: masesgroup/retrieve-changed-files@491e80760c0e28d36ca6240a27b1ccb8e1402c13
 
       - name: Find image directories
         id: images
