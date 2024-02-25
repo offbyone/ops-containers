@@ -17,6 +17,7 @@ services:
     image: ghcr.io/offbyone/sidecar:main
     labels:
       - com.centurylinklabs.watchtower.scope=cobalt
+      - "com.centurylinklabs.watchtower.enable=true"
 
   cobalt-api:
     image: ghcr.io/wukko/cobalt:7
@@ -43,6 +44,7 @@ services:
       #- cookiePath=/cookies.json
       # see cookies_example.json for example file.
     labels:
+      - com.centurylinklabs.watchtower.enable=true
       - com.centurylinklabs.watchtower.scope=cobalt
 
       # if you want to use cookies when fetching data from services, uncomment volumes and next line
@@ -73,14 +75,7 @@ services:
 
     labels:
       - com.centurylinklabs.watchtower.scope=cobalt
-
-    # update the cobalt image automatically with watchtower
-  watchtower:
-    image: ghcr.io/containrrr/watchtower
-    restart: unless-stopped
-    command: --cleanup --scope cobalt --interval 900
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - com.centurylinklabs.watchtower.enable=true
 
 volumes:
   tailscale-data:
