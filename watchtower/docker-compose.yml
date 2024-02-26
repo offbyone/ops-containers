@@ -1,38 +1,14 @@
 version: "3.5"
 
 services:
-  # watchtower:
-  #   image: containrrr/watchtower
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ./.links/watchtower-config.json:/config.json
-  #   command: --interval 30
-  #   env_file: .env
-  #   environment:
-  #     WATCHTOWER_LABEL_ENABLE: true
-  #   labels:
-  #     - "com.centurylinklabs.watchtower.enable=true"
-  sidecar:
-    hostname: whatsupdocker
-    restart: always
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
-    environment:
-      - TS_SERVE_PORT=3000
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-  whatsupdocker:
-    image: fmartinou/whats-up-docker
-    container_name: wud
+  watchtower:
+    image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    network_mode: "service:sidecar"
-
-volumes:
-  tailscale-data:
+      - ./.links/watchtower-config.json:/config.json
+    command: --interval 30
+    env_file: .env
+    environment:
+      - "WATCHTOWER_LABEL_ENABLE=true"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
