@@ -3,7 +3,7 @@ version: "3.4"
 services:
   sidecar:
     hostname: atuin
-    restart: unless-stopped
+    restart: always
     volumes:
       - tailscale-data:/var/lib/tailscale
     devices:
@@ -20,7 +20,7 @@ services:
   atuin:
     image: ghcr.io/atuinsh/atuin:18.0.0
     network_mode: "service:sidecar"
-    restart: unless-stopped
+    restart: always
     depends_on:
       - db
     command: server start
@@ -32,7 +32,7 @@ services:
       ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@localhost/atuin
   db:
     image: postgres:14
-    restart: unless-stopped
+    restart: always
     network_mode: "service:sidecar"
     volumes: # Don't remove permanent storage for index database files!
       - "atuin-data:/var/lib/postgresql/data/"

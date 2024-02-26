@@ -25,11 +25,11 @@ services:
       - lidarr-config:/config
       - blob-media:/data
     network_mode: "service:sidecar"
-    restart: unless-stopped
+    restart: always
   exporter:
     image: ghcr.io/onedr0p/exportarr:latest
     command: lidarr
-    restart: unless-stopped
+    restart: always
     network_mode: "service:sidecar"
     environment:
       - PORT=9707

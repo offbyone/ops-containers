@@ -21,7 +21,7 @@ services:
 
   cobalt-api:
     image: ghcr.io/wukko/cobalt:7
-    restart: unless-stopped
+    restart: always
     container_name: cobalt-api
     network_mode: service:sidecar
 
@@ -53,7 +53,7 @@ services:
 
   cobalt-web:
     image: ghcr.io/wukko/cobalt:7
-    restart: unless-stopped
+    restart: always
     container_name: cobalt-web
     network_mode: service:sidecar
 

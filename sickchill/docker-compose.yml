@@ -26,7 +26,7 @@ services:
       - blob-media:/mnt/media
       - sickchill-data:/var/lib/sickchill
     network_mode: "service:sidecar"
-    restart: unless-stopped
+    restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 

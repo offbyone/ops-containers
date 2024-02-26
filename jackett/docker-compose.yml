@@ -20,7 +20,7 @@ services:
   jackett:
     image: lscr.io/linuxserver/jackett:latest
     network_mode: "service:sidecar"
-    restart: unless-stopped
+    restart: always
     volumes:
       - blob-media:/media
       - jackett-config:/config

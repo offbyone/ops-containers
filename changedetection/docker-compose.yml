@@ -66,7 +66,7 @@ services:
     #      - FETCH_WORKERS=10
 
     # Comment out ports: when using behind a reverse proxy , enable networks: etc.
-    restart: unless-stopped
+    restart: always
 
     # Used for fetching pages via WebDriver+Chrome where you need Javascript support.
     # Now working on arm64 (needs testing on rPi - tested on Oracle ARM instance)
@@ -90,14 +90,14 @@ services:
 #            # Workaround to avoid the browser crashing inside a docker container
 #            # See https://github.com/SeleniumHQ/docker-selenium#quick-start
 #            - /dev/shm:/dev/shm
-#        restart: unless-stopped
+#        restart: always
 
 # Used for fetching pages via Playwright+Chrome where you need Javascript support.
 
 #    playwright-chrome:
 #        hostname: playwright-chrome
 #        image: browserless/chrome
-#        restart: unless-stopped
+#        restart: always
 #        environment:
 #            - SCREEN_WIDTH=1920
 #            - SCREEN_HEIGHT=1024
