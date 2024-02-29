@@ -13,6 +13,8 @@ services:
     environment:
       - TS_SERVE_PORT=5000
     image: ghcr.io/offbyone/sidecar:main
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   changedetection:
     image: ghcr.io/dgtlmoon/changedetection.io
@@ -112,7 +114,9 @@ services:
 #
 #             Ignore HTTPS errors, like for self-signed certs
 #            - DEFAULT_IGNORE_HTTPS_ERRORS=true
-#
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
 volumes:
   changedetection-data:
   tailscale-data:
