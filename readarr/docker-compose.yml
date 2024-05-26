@@ -16,12 +16,12 @@ services:
     image: ghcr.io/offbyone/sidecar:main
 
   readarr:
-    image: cr.hotio.dev/hotio/readarr:latest
+    image: lscr.io/linuxserver/readarr:develop
     environment:
       - TZ=Etc/UTC
     volumes:
       - readarr-config:/config
-      - blob-media:/data
+      - blob-media:/books
     network_mode: "service:sidecar"
     restart: always
 
@@ -42,6 +42,6 @@ volumes:
     driver: local
     driver_opts:
       type: cifs
-      device: //blob.lan.offby1.net/Media
-      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+      device: //blob.lan.offby1.net/Media/ebooks/library
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
   readarr-config:
