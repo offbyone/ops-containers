@@ -1,0 +1,29 @@
+services:
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: tautulli
+    network_mode: service:sidecar
+    restart: always
+    volumes:
+      - /etc/tautulli:/config
+      - "/var/lib/plexmediaserver/Library/Application Support/Plex Media Server:/var/lib/plexmediaserver/Library/Application Support/Plex Media Server"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+
+  sidecar:
+    hostname: tautulli
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    environment:
+      - TS_SERVE_PORT=8181
+    image: ghcr.io/offbyone/sidecar:main
+
+volumes:
+  tailscale-data:
