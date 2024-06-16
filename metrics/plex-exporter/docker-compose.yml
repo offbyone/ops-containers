@@ -1,0 +1,30 @@
+---
+version: "3.7"
+services:
+  sidecar:
+    hostname: plex-exporter
+    restart: always
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    env_file: .proxy.env
+    environment:
+      - TS_SERVE_PORT=9000
+    image: ghcr.io/offbyone/sidecar:main
+
+  plex-exporter:
+    image: "ghcr.io/jsclayton/prometheus-plex-exporter"
+    # image: "ghcr.io/axsuul/plex-media-server-exporter:${PLEX_EXPORTER_POLLER_TAG}"
+    network_mode: "service:sidecar"
+    restart: always
+    environment:
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - PLEX_ADDR=${PLEX_ADDR}
+      - PLEX_SERVER=${PLEX_ADDR}
+
+volumes:
+  tailscale-data:

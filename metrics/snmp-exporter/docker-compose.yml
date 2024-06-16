@@ -1,0 +1,29 @@
+---
+version: "3.7"
+services:
+  sidecar:
+    hostname: snmp-exporter
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    env_file: .proxy.env
+    environment:
+      - TS_SERVE_PORT=9116
+    image: ghcr.io/offbyone/sidecar:main
+
+  snmp-exporter:
+    image: "prom/snmp-exporter"
+    network_mode: "service:sidecar"
+    restart: unless-stopped
+    volumes:
+      - "${SNMP_CONFIG_BASE}:/etc/snmp_exporter"
+    command:
+      - "--config.file=/etc/snmp_exporter/snmp.yml"
+      - "--web.listen-address=0.0.0.0:9116"
+
+volumes:
+  tailscale-data:

@@ -1,0 +1,83 @@
+version: "3.7"
+services:
+  prometheus-sidecar:
+    hostname: prometheus
+    restart: always
+    volumes:
+      - prometheus-tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    environment:
+      - TS_SERVE_PORT=9090
+    image: ghcr.io/offbyone/sidecar:main
+
+  prometheus:
+    image: "prom/prometheus:v2.41.0"
+    restart: always
+    network_mode: "service:prometheus-sidecar"
+    volumes:
+      - /etc/prometheus:/etc/prometheus
+      - prometheus-storage:/prometheus
+
+  grafana-sidecar:
+    hostname: grafana
+    restart: always
+    volumes:
+      - grafana-tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    environment:
+      - TS_SERVE_PORT=3000
+    image: ghcr.io/offbyone/sidecar:main
+
+  grafana:
+    image: "grafana/grafana:9.3.2"
+    network_mode: "service:grafana-sidecar"
+    restart: always
+    user: "1000:1000"
+    volumes:
+      - /etc/grafana:/etc/grafana
+      - grafana-storage:/var/lib/grafana
+
+  loki-sidecar:
+    hostname: loki
+    restart: always
+    volumes:
+      - loki-tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    environment:
+      - TS_SERVE_PORT=3100
+    image: ghcr.io/offbyone/sidecar:main
+
+  loki:
+    image: grafana/loki:latest
+    network_mode: "service:loki-sidecar"
+    restart: always
+    user: "1000:1000"
+    volumes:
+      - /etc/loki:/etc/loki
+      - loki-storage:/loki
+
+volumes:
+  grafana-storage:
+  loki-storage:
+  prometheus-storage:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /var/tick/prometheus
+
+  prometheus-tailscale-data:
+  grafana-tailscale-data:
+  loki-tailscale-data:

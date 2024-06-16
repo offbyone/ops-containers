@@ -1,5 +1,5 @@
 /proxy/tailscale-named-proxy
 docker-compose.void.yml
-/*/.proxy.env
+.proxy.env
 /*/.env
 /*/.exportarr.env
