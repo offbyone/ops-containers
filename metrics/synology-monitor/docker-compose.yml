@@ -19,6 +19,7 @@ services:
     environment:
       SYNCTHING_URI: "http://blob:8384/"
       SYNCTHING_TOKEN: "${BLOB_SYNCTHING_TOKEN}"
+    network_mode: "service:sidecar-blob"
     image: f100024/syncthing_exporter:latest
 
   sidecar-whatbox:
@@ -40,6 +41,8 @@ services:
     environment:
       SYNCTHING_URI: "https://syncthing-whatbox.camel-tortoise.ts.net/"
       SYNCTHING_TOKEN: "${WHATBOX_SYNCTHING_TOKEN}"
+    network_mode: "service:sidecar-whatbox"
+    image: f100024/syncthing_exporter:latest
 
 secrets:
   blob-token:
