@@ -1,0 +1,51 @@
+---
+services:
+  sidecar-blob:
+    hostname: synology-exporter-blob
+    restart: always
+    volumes:
+      - tailscale-data-blob:/var/lib/tailcale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    environment:
+      - TS_SERVE_PORT=9093
+    image: ghcr.io/offbyone/sidecar:main
+
+  exporter-blob:
+    restart: always
+    environment:
+      SYNCTHING_URI: "http://blob:8384/"
+      SYNCTHING_TOKEN: "${BLOB_SYNCTHING_TOKEN}"
+    image: f100024/syncthing_exporter:latest
+
+  sidecar-whatbox:
+    hostname: synology-exporter-whatbox
+    restart: always
+    volumes:
+      - tailscale-data-whatbox:/var/lib/tailcale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    environment:
+      - TS_SERVE_PORT=9093
+    image: ghcr.io/offbyone/sidecar:main
+
+  exporter-whatbox:
+    restart: always
+    environment:
+      SYNCTHING_URI: "https://syncthing-whatbox.camel-tortoise.ts.net/"
+      SYNCTHING_TOKEN: "${WHATBOX_SYNCTHING_TOKEN}"
+
+secrets:
+  blob-token:
+    file: blob-token.txt
+  whatbox-token:
+    file: whatbox-token.txt
+volumes:
+  tailscale-data-blob:
+  tailscale-data-whatbox:
