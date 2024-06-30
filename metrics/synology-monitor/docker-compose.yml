@@ -1,7 +1,7 @@
 ---
 services:
   sidecar-blob:
-    hostname: synology-exporter-blob
+    hostname: syncthing-exporter-blob
     restart: always
     volumes:
       - tailscale-data-blob:/var/lib/tailcale
@@ -23,7 +23,7 @@ services:
     image: f100024/syncthing_exporter:latest
 
   sidecar-whatbox:
-    hostname: synology-exporter-whatbox
+    hostname: syncthing-exporter-whatbox
     restart: always
     volumes:
       - tailscale-data-whatbox:/var/lib/tailcale
