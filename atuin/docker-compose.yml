@@ -18,7 +18,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
   atuin:
-    image: ghcr.io/atuinsh/atuin:18.2.0
+    image: ghcr.io/atuinsh/atuin:18.3.0
     network_mode: "service:sidecar"
     restart: always
     depends_on:
