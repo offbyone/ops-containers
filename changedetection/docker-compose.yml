@@ -9,7 +9,7 @@ services:
     cap_add: # Required for tailscale to work
       - net_admin
       - sys_module
-    env_file: .proxy.env
+    env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=5000
     image: ghcr.io/offbyone/sidecar:main
