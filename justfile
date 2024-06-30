@@ -20,9 +20,9 @@ shell: build
         --name=sickchill ghcr.io/offbyone/sickchill:latest /bin/bash
 
 
-up: (svc-up "bitbucket") (svc-up "atuin") (svc-up "jackett") (svc-up "radarr") (svc-up "cobalt") (svc-up "sickchill")
+up: (svc-up "bitbucket") (svc-up "atuin") (svc-up "jackett")(svc-up "radarr") (svc-up "cobalt") (svc-up "sickchill") (svc-up "lidarr")
 
-down: (svc-down "sickchill") (svc-down "cobalt") (svc-down "radarr") (svc-down "jackett") (svc-down "atuin") (svc-down "bitbucket")
+down: (svc-down "lidarr") (svc-down "sickchill") (svc-down "cobalt") (svc-down "radarr") (svc-down "jackett") (svc-down "atuin") (svc-down "bitbucket")
 
 svc-up name:
     cd {{ name }} && docker compose up -d
