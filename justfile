@@ -18,3 +18,14 @@ shell: build
         -v blob-media:/mnt/media \
         -v /Users/offby1/projects/home/containers/sickchill/sickchill-20230530005247/:/var/lib/sickchill/ \
         --name=sickchill ghcr.io/offbyone/sickchill:latest /bin/bash
+
+
+up: (svc-up sickchill)
+
+down: (svc-down sickchill)
+
+svc-up name:
+    cd {{ name }} && docker compose up -d
+
+svc-down name:
+    cd {{ name }} && docker compose down

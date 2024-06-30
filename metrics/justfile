@@ -1,9 +1,17 @@
-up: top exporters
+up: top-up exporters-up
+down: exporters-down top-down
 
-top:
+top-up:
     docker compose up -d
 
-exporters: (exporter "blackbox-exporter") (exporter "plex-exporter") (exporter "snmp-exporter") (exporter "synology-monitor") (exporter "udm-poller")
+top-down:
+    docker compose down
 
-exporter name:
+exporters-up: (svc-up "blackbox-exporter") (svc-up "plex-exporter") (svc-up "snmp-exporter") (svc-up "synology-monitor") (svc-up "udm-poller")
+exporters-down: (svc-down "blackbox-exporter") (svc-down "plex-exporter") (svc-down "snmp-exporter") (svc-down "synology-monitor") (svc-down "udm-poller")
+
+svc-up name:
     cd {{ name }} && docker compose up -d
+
+svc-down name:
+    cd {{ name }} && docker compose down
