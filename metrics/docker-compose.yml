@@ -10,6 +10,7 @@ services:
     cap_add: # Required for tailscale to work
       - net_admin
       - sys_module
+    env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=9090
     image: ghcr.io/offbyone/sidecar:main
@@ -32,6 +33,7 @@ services:
     cap_add: # Required for tailscale to work
       - net_admin
       - sys_module
+    env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=3000
     image: ghcr.io/offbyone/sidecar:main
@@ -55,6 +57,7 @@ services:
     cap_add:
       - net_admin
       - sys_module
+    env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=3100
     image: ghcr.io/offbyone/sidecar:main
