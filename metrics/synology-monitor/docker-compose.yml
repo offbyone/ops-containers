@@ -10,6 +10,7 @@ services:
     cap_add: # Required for tailscale to work
       - net_admin
       - sys_module
+    env_file: ../.tailscale.exporter.env
     environment:
       - TS_SERVE_PORT=9093
     image: ghcr.io/offbyone/sidecar:main
@@ -32,6 +33,7 @@ services:
     cap_add: # Required for tailscale to work
       - net_admin
       - sys_module
+    env_file: ../.tailscale.exporter.env
     environment:
       - TS_SERVE_PORT=9093
     image: ghcr.io/offbyone/sidecar:main
