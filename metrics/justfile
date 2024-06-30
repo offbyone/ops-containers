@@ -1,0 +1,9 @@
+up: top exporters
+
+top:
+    docker compose up -d
+
+exporters: (exporter "blackbox-exporter") (exporter "plex-exporter") (exporter "snmp-exporter") (exporter "synlogy-monitor") (exporter "udm-poller")
+
+exporter name:
+    cd {{ name }} && docker compose up -d
