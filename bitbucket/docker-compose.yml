@@ -1,4 +1,5 @@
 ---
+name: bitbucket
 services:
   dozzle:
     container_name: dozzle
@@ -10,7 +11,11 @@ services:
     hostname: dozzle-bitbucket
     restart: always
     volumes:
-      - tailscale-data-dozzle:/var/lib/tailscale
+      - type: volume
+        source: tailscale-data
+        target: /var/lib/tailscale
+        volume:
+          subpath: dozzle
     devices:
       - /dev/net/tun
     cap_add: # Required for tailscale to work
@@ -22,3 +27,6 @@ services:
     image: ghcr.io/offbyone/sidecar:main
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+
+volumes:
+  tailscale-data:
