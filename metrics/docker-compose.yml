@@ -33,7 +33,11 @@ services:
     cap_add: # Required for tailscale to work
       - net_admin
       - sys_module
-    env_file: ../bitbucket/.tailscale.env
+    # Why is this commented out? Because grafana needs to be able to access
+    # the shared shop monitor endpoint. Nodes shared in from other tailnets
+    # cannot be shared with tagged devices, only with owned ones. So, this
+    # needs to be "owned" by my user.
+    # env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=3000
     image: ghcr.io/offbyone/sidecar:main
@@ -66,7 +70,6 @@ services:
     image: grafana/loki:latest
     network_mode: "service:loki-sidecar"
     restart: always
-    user: "1000:1000"
     volumes:
       - /etc/loki:/etc/loki
       - loki-storage:/loki
