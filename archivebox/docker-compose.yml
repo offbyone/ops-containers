@@ -210,7 +210,8 @@ networks:
 #     root_folder_id = 0Abcd...
 #     token = {"access_token":...}
 
-# volumes:
+volumes:
+  tailscale-data:
 #     archive:
 #         driver: rclone
 #         driver_opts:
