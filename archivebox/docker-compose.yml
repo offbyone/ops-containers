@@ -9,6 +9,12 @@
 #     docker compose run archivebox help
 # Documentation:
 #     https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker-compose
+x-user: &user
+  PUID: 1026
+  PGID: 100
+
+x-container-user: &container-user
+  user: "1026:100"
 
 services:
   sidecar:
@@ -25,6 +31,7 @@ services:
     image: ghcr.io/offbyone/sidecar:main
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+    restart: always
 
   archivebox:
     image: archivebox/archivebox:latest
@@ -33,31 +40,32 @@ services:
       - /volume1/Backups/archivebox:/data
       # ./data/personas/Default/chrome_profile/Default:/data/personas/Default/chrome_profile/Default
     environment:
+      # <<: *user
       # - ADMIN_USERNAME=admin            # create an admin user on first run with the given user/pass combo
       # - ADMIN_PASSWORD=SomeSecretPassword
-      - CSRF_TRUSTED_ORIGINS=https://archivebox.example.com # REQUIRED for auth, REST API, etc. to work
-      - ALLOWED_HOSTS=* # set this to the hostname(s) from your CSRF_TRUSTED_ORIGINS
-      - PUBLIC_INDEX=True # set to False to prevent anonymous users from viewing snapshot list
-      - PUBLIC_SNAPSHOTS=True # set to False to prevent anonymous users from viewing snapshot content
-      - PUBLIC_ADD_VIEW=False # set to True to allow anonymous users to submit new URLs to archive
-      - SEARCH_BACKEND_ENGINE=sonic # tells ArchiveBox to use sonic container below for fast full-text search
-      - SEARCH_BACKEND_HOST_NAME=sonic
-      - SEARCH_BACKEND_PASSWORD=SomeSecretPassword
-      - PUID=1026 # set to your host user's UID & GID if you encounter permissions issues
-      - PGID=100 # UID/GIDs <500 may clash with existing users and are not recommended
-      - MEDIA_MAX_SIZE=750g # increase this filesize limit to allow archiving larger audio/video files
-      - TIMEOUT=120 # increase this number to 120+ seconds if you see many slow downloads timing out
+      CSRF_TRUSTED_ORIGINS: https://archivebox.example.com # REQUIRED for auth, REST API, etc. to work
+      ALLOWED_HOSTS: "*" # set this to the hostname(s) from your CSRF_TRUSTED_ORIGINS
+      PUBLIC_INDEX: True # set to False to prevent anonymous users from viewing snapshot list
+      PUBLIC_SNAPSHOTS: True # set to False to prevent anonymous users from viewing snapshot content
+      PUBLIC_ADD_VIEW: False # set to True to allow anonymous users to submit new URLs to archive
+      SEARCH_BACKEND_ENGINE: sonic # tells ArchiveBox to use sonic container below for fast full-text search
+      SEARCH_BACKEND_HOST_NAME: sonic
+      SEARCH_BACKEND_PASSWORD: SomeSecretPassword
+      MEDIA_MAX_SIZE: 750g # increase this filesize limit to allow archiving larger audio/video files
+      TIMEOUT: 120 # increase this number to 120+ seconds if you see many slow downloads timing out
       # - CHECK_SSL_VALIDITY=True         # set to False to disable strict SSL checking (allows saving URLs w/ broken certs)
-      - SAVE_ARCHIVE_DOT_ORG=False # set to False to disable submitting all URLs to Archive.org when archiving
+      SAVE_ARCHIVE_DOT_ORG: False # set to False to disable submitting all URLs to Archive.org when archiving
       # - USER_AGENT="..."                # set a custom USER_AGENT to avoid being blocked as a bot
       # ...
       # add further configuration options from archivebox/config.py as needed (to apply them only to this container)
       # or set using `docker compose run archivebox config --set SOME_KEY=someval` (to persist config across all containers)
+    # <<: *container-user
     # For ad-blocking during archiving, uncomment this section and pihole service section below
     # networks:
     #   - dns
     # dns:
     #   - 172.20.0.53
+    restart: always
 
   ######## Optional Addons: tweak examples below as needed for your specific use case ########
 
@@ -71,16 +79,15 @@ services:
     image: archivebox/archivebox:latest
     command: schedule --foreground --update --every=day
     environment:
-      - TIMEOUT=120 # use a higher timeout than the main container to give slow tasks more time when retrying
-      # - PUID=502                        # set to your host user's UID & GID if you encounter permissions issues
-      # - PGID=20
+      TIMEOUT: 120 # use a higher timeout than the main container to give slow tasks more time when retrying
+      # <<: *user
     volumes:
       - /volume1/Backups/archivebox:/data
     # cpus: 2                               # uncomment / edit these values to limit scheduler container resource consumption
     # mem_limit: 2048m
-    # restart: always
+    restart: always
 
-  ### This runs the optional Sonic full-text search backend (much faster than default rg backend).
+  ### this runs the optional Sonic full-text search backend (much faster than default rg backend).
   # If Sonic is ever started after not running for a while, update its full-text index by running:
   #   $ docker-compose run archivebox update --index-only
   # https://github.com/ArchiveBox/ArchiveBox/wiki/Setting-up-Search
@@ -100,8 +107,9 @@ services:
     environment:
       - SEARCH_BACKEND_PASSWORD=SomeSecretPassword
     volumes:
-      #- ./sonic.cfg:/etc/sonic.cfg:ro    # use this if you prefer to download the config on the host and mount it manually
+      - /volume1/Backups/archivebox/sonic.cfg:/etc/sonic.cfg:ro # use this if you prefer to download the config on the host and mount it manually
       - /volume1/Backups/archivebox/sonic:/var/lib/sonic/store
+    restart: always
 
   ### This container runs xvfb+noVNC so you can watch the ArchiveBox browser as it archives things,
   # or remote control it to set up a chrome profile w/ login credentials for sites you want to archive.
