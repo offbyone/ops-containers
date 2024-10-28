@@ -75,7 +75,7 @@ services:
       # - PUID=502                        # set to your host user's UID & GID if you encounter permissions issues
       # - PGID=20
     volumes:
-      - ./data:/data
+      - /volume1/Backups/archivebox:/data
     # cpus: 2                               # uncomment / edit these values to limit scheduler container resource consumption
     # mem_limit: 2048m
     # restart: always
@@ -101,7 +101,7 @@ services:
       - SEARCH_BACKEND_PASSWORD=SomeSecretPassword
     volumes:
       #- ./sonic.cfg:/etc/sonic.cfg:ro    # use this if you prefer to download the config on the host and mount it manually
-      - ./data/sonic:/var/lib/sonic/store
+      - /volume1/Backups/archivebox/sonic:/var/lib/sonic/store
 
   ### This container runs xvfb+noVNC so you can watch the ArchiveBox browser as it archives things,
   # or remote control it to set up a chrome profile w/ login credentials for sites you want to archive.
