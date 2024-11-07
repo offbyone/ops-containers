@@ -1,4 +1,3 @@
-version: "3.2"
 services:
   sidecar:
     hostname: changedetection
@@ -76,44 +75,44 @@ services:
 
     # If WEBDRIVER or PLAYWRIGHT are enabled, changedetection container depends on that
     # and must wait before starting (substitute "browser-chrome" with "playwright-chrome" if last one is used)
-#    depends_on:
-#        browser-chrome:
-#            condition: service_started
+    #    depends_on:
+    #        browser-chrome:
+    #            condition: service_started
 
-#    browser-chrome:
-#        hostname: browser-chrome
-#        image: selenium/standalone-chrome-debug:3.141.59
-#        environment:
-#            - VNC_NO_PASSWORD=1
-#            - SCREEN_WIDTH=1920
-#            - SCREEN_HEIGHT=1080
-#            - SCREEN_DEPTH=24
-#        volumes:
-#            # Workaround to avoid the browser crashing inside a docker container
-#            # See https://github.com/SeleniumHQ/docker-selenium#quick-start
-#            - /dev/shm:/dev/shm
-#        restart: always
+    #    browser-chrome:
+    #        hostname: browser-chrome
+    #        image: selenium/standalone-chrome-debug:3.141.59
+    #        environment:
+    #            - VNC_NO_PASSWORD=1
+    #            - SCREEN_WIDTH=1920
+    #            - SCREEN_HEIGHT=1080
+    #            - SCREEN_DEPTH=24
+    #        volumes:
+    #            # Workaround to avoid the browser crashing inside a docker container
+    #            # See https://github.com/SeleniumHQ/docker-selenium#quick-start
+    #            - /dev/shm:/dev/shm
+    #        restart: always
 
-# Used for fetching pages via Playwright+Chrome where you need Javascript support.
+    # Used for fetching pages via Playwright+Chrome where you need Javascript support.
 
-#    playwright-chrome:
-#        hostname: playwright-chrome
-#        image: browserless/chrome
-#        restart: always
-#        environment:
-#            - SCREEN_WIDTH=1920
-#            - SCREEN_HEIGHT=1024
-#            - SCREEN_DEPTH=16
-#            - ENABLE_DEBUGGER=false
-#            - PREBOOT_CHROME=true
-#            - CONNECTION_TIMEOUT=300000
-#            - MAX_CONCURRENT_SESSIONS=10
-#            - CHROME_REFRESH_TIME=600000
-#            - DEFAULT_BLOCK_ADS=true
-#            - DEFAULT_STEALTH=true
-#
-#             Ignore HTTPS errors, like for self-signed certs
-#            - DEFAULT_IGNORE_HTTPS_ERRORS=true
+    #    playwright-chrome:
+    #        hostname: playwright-chrome
+    #        image: browserless/chrome
+    #        restart: always
+    #        environment:
+    #            - SCREEN_WIDTH=1920
+    #            - SCREEN_HEIGHT=1024
+    #            - SCREEN_DEPTH=16
+    #            - ENABLE_DEBUGGER=false
+    #            - PREBOOT_CHROME=true
+    #            - CONNECTION_TIMEOUT=300000
+    #            - MAX_CONCURRENT_SESSIONS=10
+    #            - CHROME_REFRESH_TIME=600000
+    #            - DEFAULT_BLOCK_ADS=true
+    #            - DEFAULT_STEALTH=true
+    #
+    #             Ignore HTTPS errors, like for self-signed certs
+    #            - DEFAULT_IGNORE_HTTPS_ERRORS=true
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
