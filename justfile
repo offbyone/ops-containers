@@ -24,7 +24,6 @@ bitbucket-up: \
      (svc-up "bitbucket") \
      (svc-up "changedetection") \
      (svc-up "cobalt") \
-     (svc-up "golink") \
      (svc-up "jackett") \
      (svc-up "metrics") \
      (svc-up "metrics/blackbox-exporter") \
@@ -41,7 +40,6 @@ bitbucket-down: \
      (svc-down "bitbucket") \
      (svc-down "changedetection") \
      (svc-down "cobalt") \
-     (svc-down "golink") \
      (svc-down "jackett") \
      (svc-down "metrics") \
      (svc-down "metrics/blackbox-exporter") \
