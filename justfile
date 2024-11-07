@@ -19,13 +19,42 @@ shell: build
         -v /Users/offby1/projects/home/containers/sickchill/sickchill-20230530005247/:/var/lib/sickchill/ \
         --name=sickchill ghcr.io/offbyone/sickchill:latest /bin/bash
 
+bitbucket-up: \
+     (svc-up "atuin") \
+     (svc-up "bitbucket") \
+     (svc-up "changedetection") \
+     (svc-up "cobalt") \
+     (svc-up "golink") \
+     (svc-up "jackett") \
+     (svc-up "metrics") \
+     (svc-up "metrics/blackbox-exporter") \
+     (svc-up "metrics/plex-exporter") \
+     (svc-up "metrics/snmp-exporter") \
+     (svc-up "metrics/synology-monitor") \
+     (svc-up "metrics/udm-poller") \
+     (svc-up "portainer") \
+     (svc-up "radarr") \
+     (svc-up "sickchill")
 
-up: (svc-up "bitbucket") (svc-up "atuin") (svc-up "jackett")(svc-up "radarr") (svc-up "cobalt") (svc-up "sickchill") (svc-up "lidarr")
-
-down: (svc-down "lidarr") (svc-down "sickchill") (svc-down "cobalt") (svc-down "radarr") (svc-down "jackett") (svc-down "atuin") (svc-down "bitbucket")
+bitbucket-down: \
+     (svc-down "atuin") \
+     (svc-down "bitbucket") \
+     (svc-down "changedetection") \
+     (svc-down "cobalt") \
+     (svc-down "golink") \
+     (svc-down "jackett") \
+     (svc-down "metrics") \
+     (svc-down "metrics/blackbox-exporter") \
+     (svc-down "metrics/plex-exporter") \
+     (svc-down "metrics/snmp-exporter") \
+     (svc-down "metrics/synology-monitor") \
+     (svc-down "metrics/udm-poller") \
+     (svc-down "portainer") \
+     (svc-down "radarr") \
+     (svc-down "sickchill")
 
 svc-up name:
-    cd {{ name }} && docker compose up -d
+    cd {{ name }} && docker compose up --wait
 
 svc-down name:
     cd {{ name }} && docker compose down
