@@ -14,6 +14,8 @@ services:
     environment:
       - TS_SERVE_PORT=8787
     image: ghcr.io/offbyone/sidecar:main
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   readarr:
     image: lscr.io/linuxserver/readarr:develop

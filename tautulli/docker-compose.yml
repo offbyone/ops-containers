@@ -25,6 +25,8 @@ services:
     environment:
       - TS_SERVE_PORT=8181
     image: ghcr.io/offbyone/sidecar:main
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
 volumes:
   tailscale-data:
