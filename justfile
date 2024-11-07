@@ -31,7 +31,6 @@ bitbucket-up: \
      (svc-up "metrics/snmp-exporter") \
      (svc-up "metrics/synology-monitor") \
      (svc-up "metrics/udm-poller") \
-     (svc-up "portainer") \
      (svc-up "radarr") \
      (svc-up "sickchill")
 
@@ -47,7 +46,6 @@ bitbucket-down: \
      (svc-down "metrics/snmp-exporter") \
      (svc-down "metrics/synology-monitor") \
      (svc-down "metrics/udm-poller") \
-     (svc-down "portainer") \
      (svc-down "radarr") \
      (svc-down "sickchill")
 
