@@ -1,5 +1,4 @@
-ARG UV_VERSION=0.4.2
-FROM ubuntu:noble as compile-sickchill
+FROM ubuntu:noble AS compile-sickchill
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -15,7 +14,7 @@ RUN apt-get update && \
 RUN curl https://sh.rustup.rs -sSf | bash -x -s -- -y
 
 # Security-conscious organizations should package/review uv themselves.
-COPY --from=ghcr.io/astral-sh/uv:0.4.2 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.5 /uv /bin/uv
 
 # - Silence uv complaining about not being able to use hard links,
 # - tell uv to byte-compile packages for faster application startups,
@@ -59,10 +58,14 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=ghcr.io/astral-sh/uv:0.4.2 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.5 /uv /bin/uv
 
 WORKDIR /app
-CMD uv run python -m SickChill \
-    --datadir=/var/lib/sickchill \
-    --config /var/lib/sickchill/config.ini \
-    --nolaunch --port 8080
+CMD [ \
+    "uv", "run", "python", \
+    "-m", "SickChill", \
+    "--datadir=/var/lib/sickchill", \
+    "--config", "/var/lib/sickchill/config.ini", \
+    "--nolaunch", \
+    "--port", "8080" \
+    ]
