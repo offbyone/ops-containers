@@ -1,5 +1,5 @@
-set dotenv-load
+update-deps:
+    uv pip compile --upgrade requirements.in --output-file requirements.txt
 
 pip-compile:
-    docker build -t sickchill-requirements:latest -f Dockerfile.requirements .
-    docker run --rm -it -v $(pwd):/src:rw sickchill-requirements:latest
+    uv pip compile requirements.in --output-file requirements.txt

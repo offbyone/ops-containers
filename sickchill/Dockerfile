@@ -61,11 +61,8 @@ RUN apt-get update && \
 COPY --from=ghcr.io/astral-sh/uv:0.5 /uv /bin/uv
 
 WORKDIR /app
-CMD [ \
-    "uv", "run", "python", \
-    "-m", "SickChill", \
-    "--datadir=/var/lib/sickchill", \
-    "--config", "/var/lib/sickchill/config.ini", \
-    "--nolaunch", \
-    "--port", "8080" \
-    ]
+ENV PATH=/app/.venv/bin:$PATH
+CMD python -m SickChill \
+    --datadir=/var/lib/sickchill \
+    --config /var/lib/sickchill/config.ini \
+    --nolaunch --port 8080
