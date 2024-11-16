@@ -17,7 +17,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   prometheus:
-    image: "prom/prometheus:v2.55.0"
+    image: "prom/prometheus:v3.0.0"
     restart: always
     network_mode: "service:prometheus-sidecar"
     volumes:
