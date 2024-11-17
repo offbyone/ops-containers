@@ -3,3 +3,5 @@ docker-compose.void.yml
 .proxy.env
 /*/.env
 /*/.exportarr.env
+.tailscale.exporter.env
+bitbucket/.tailscale.env

@@ -8,6 +8,8 @@ services:
     env_file: ../.tailscale.exporter.env
     environment:
       - TS_SERVE_PORT=9093
+    volumes:
+      - tailscale-data-blob:/var/lib/tailscale
 
   exporter-blob:
     restart: always
@@ -25,6 +27,8 @@ services:
     env_file: ../.tailscale.exporter.env
     environment:
       - TS_SERVE_PORT=9093
+    volumes:
+      - tailscale-data-whatbox:/var/lib/tailscale
 
   exporter-whatbox:
     restart: always
