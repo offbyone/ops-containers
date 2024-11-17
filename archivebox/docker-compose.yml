@@ -18,20 +18,13 @@ x-container-user: &container-user
 
 services:
   sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../blob/.tailscale.env
     hostname: archivebox
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
     environment:
       - TS_SERVE_PORT=8000
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    restart: always
 
   archivebox:
     image: archivebox/archivebox:latest

@@ -1,0 +1,14 @@
+---
+services:
+  .sidecar:
+    restart: always
+    image: ghcr.io/offbyone/sidecar:main
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    devices:
+      - /dev/net/tun
+    cap_add: # Required for tailscale to work
+      - net_admin
+      - sys_module
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"

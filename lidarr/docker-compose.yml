@@ -1,18 +1,13 @@
 ---
 services:
   sidecar:
-    hostname: lidarr
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     env_file: ../bitbucket/.tailscale.env
+    hostname: lidarr
     environment:
       - TS_SERVE_PORT=8686
-    image: ghcr.io/offbyone/sidecar:main
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest

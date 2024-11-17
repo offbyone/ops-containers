@@ -1,19 +1,12 @@
 services:
   sidecar:
-    hostname: changedetection
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     env_file: ../bitbucket/.tailscale.env
+    hostname: changedetection
     environment:
       - TS_SERVE_PORT=5000
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   changedetection:
     image: ghcr.io/dgtlmoon/changedetection.io

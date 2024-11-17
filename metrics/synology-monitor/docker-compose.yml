@@ -1,21 +1,13 @@
 ---
 services:
   sidecar-blob:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     hostname: syncthing-exporter-blob
-    restart: always
-    volumes:
-      - tailscale-data-blob:/var/lib/tailcale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
     env_file: ../.tailscale.exporter.env
     environment:
       - TS_SERVE_PORT=9093
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   exporter-blob:
     restart: always
@@ -26,21 +18,13 @@ services:
     image: f100024/syncthing_exporter:latest
 
   sidecar-whatbox:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     hostname: syncthing-exporter-whatbox
-    restart: always
-    volumes:
-      - tailscale-data-whatbox:/var/lib/tailcale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
     env_file: ../.tailscale.exporter.env
     environment:
       - TS_SERVE_PORT=9093
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   exporter-whatbox:
     restart: always

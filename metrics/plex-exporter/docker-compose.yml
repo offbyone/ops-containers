@@ -1,21 +1,13 @@
 ---
 services:
   sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     hostname: plex-exporter
-    restart: always
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
     env_file: ../.tailscale.exporter.env
     environment:
       - TS_SERVE_PORT=9000
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   plex-exporter:
     image: "ghcr.io/jsclayton/prometheus-plex-exporter"

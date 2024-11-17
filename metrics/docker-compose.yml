@@ -1,20 +1,14 @@
 services:
   prometheus-sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../bitbucket/.tailscale.env
     hostname: prometheus
-    restart: always
     volumes:
       - prometheus-tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
-    env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=9090
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   prometheus:
     image: "prom/prometheus:v3.0.0"
@@ -25,25 +19,19 @@ services:
       - prometheus-storage:/prometheus
 
   grafana-sidecar:
-    hostname: grafana
-    restart: always
-    volumes:
-      - grafana-tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     # Why is this commented out? Because grafana needs to be able to access
     # the shared shop monitor endpoint. Nodes shared in from other tailnets
     # cannot be shared with tagged devices, only with owned ones. So, this
     # needs to be "owned" by my user.
     # env_file: ../bitbucket/.tailscale.env
+    hostname: grafana
+    volumes:
+      - grafana-tailscale-data:/var/lib/tailscale
     environment:
       - TS_SERVE_PORT=3000
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   grafana:
     image: "grafana/grafana:9.3.2"
@@ -55,21 +43,15 @@ services:
       - grafana-storage:/var/lib/grafana
 
   loki-sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../bitbucket/.tailscale.env
     hostname: loki
-    restart: always
     volumes:
       - loki-tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add:
-      - net_admin
-      - sys_module
-    env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=3100
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   loki:
     image: grafana/loki:latest

@@ -1,19 +1,13 @@
 ---
 services:
   sidecar:
-    hostname: logs
-    restart: always
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     env_file: ../bitbucket/.tailscale.env
+    hostname: logs
     environment:
       - TS_SERVE_PORT=5080
-    image: ghcr.io/offbyone/sidecar:main
 
   openobserve:
     image: public.ecr.aws/zinclabs/openobserve:latest

@@ -7,26 +7,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     network_mode: "service:sidecar-dozzle"
-  sidecar-dozzle:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../bitbucket/.tailscale.env
     hostname: dozzle-bitbucket
-    restart: always
-    volumes:
-      - type: volume
-        source: tailscale-data
-        target: /var/lib/tailscale
-        volume:
-          subpath: dozzle
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
-    env_file: .tailscale.env
     environment:
       - TS_SERVE_PORT=8080
-    image: ghcr.io/offbyone/sidecar:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
 volumes:
   tailscale-data:

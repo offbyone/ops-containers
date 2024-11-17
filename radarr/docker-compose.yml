@@ -1,20 +1,13 @@
----
 services:
   sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
     hostname: radarr
-    image: ghcr.io/offbyone/sidecar:main
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-    devices:
-      - /dev/net/tun
-    cap_add: # Required for tailscale to work
-      - net_admin
-      - sys_module
     env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=8310
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     network_mode: "service:sidecar"
