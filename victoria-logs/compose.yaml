@@ -1,0 +1,10 @@
+services:
+  victoria-logs:
+    image: docker.io/victoriametrics/victoria-logs:v1.0.0-victorialogs
+    restart: always
+    command:
+      - --journald.streamFields=_STREAM_ID
+    ports:
+      - "9428:9428"
+    volumes:
+      - /volume1/Backups/victoria-logs-data:/victoria-logs-data
