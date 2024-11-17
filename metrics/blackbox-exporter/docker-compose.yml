@@ -2,7 +2,7 @@
 services:
   sidecar:
     extends:
-      file: ../sidecar-compose.yaml
+      file: ../../sidecar-compose.yaml
       service: .sidecar
     hostname: blackbox-exporter
     env_file: ../.tailscale.exporter.env

@@ -2,7 +2,7 @@
 services:
   sidecar-blob:
     extends:
-      file: ../sidecar-compose.yaml
+      file: ../../sidecar-compose.yaml
       service: .sidecar
     hostname: syncthing-exporter-blob
     env_file: ../.tailscale.exporter.env
@@ -19,7 +19,7 @@ services:
 
   sidecar-whatbox:
     extends:
-      file: ../sidecar-compose.yaml
+      file: ../../sidecar-compose.yaml
       service: .sidecar
     hostname: syncthing-exporter-whatbox
     env_file: ../.tailscale.exporter.env
