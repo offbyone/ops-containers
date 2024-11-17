@@ -3,7 +3,9 @@ services:
     image: docker.io/victoriametrics/victoria-logs:v1.0.0-victorialogs
     restart: always
     command:
-      - --journald.streamFields=_STREAM_ID
+      - -journald.streamFields=_STREAM_ID,_SYSTEMD_UNIT,_HOSTNAME
+      - -retention.maxDiskSpaceUsageBytes=1TiB
+      - -retentionPeriod=1y
     ports:
       - "9428:9428"
     volumes:
