@@ -7,7 +7,7 @@ services:
       file: ../sidecar-compose.yaml
       service: .sidecar
     hostname: immich
-    env_file: ../blob/.tailscale.env
+    env_file: ../prime/.tailscale.env
     environment:
       - TS_SERVE_PORT=2283
 
