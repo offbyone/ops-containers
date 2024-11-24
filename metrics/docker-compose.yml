@@ -1,23 +1,4 @@
 services:
-  prometheus-sidecar:
-    extends:
-      file: ../sidecar-compose.yaml
-      service: .sidecar
-    env_file: ../bitbucket/.tailscale.env
-    hostname: prometheus
-    volumes:
-      - prometheus-tailscale-data:/var/lib/tailscale
-    environment:
-      - TS_SERVE_PORT=9090
-
-  prometheus:
-    image: "prom/prometheus:v3.0.0"
-    restart: always
-    network_mode: "service:prometheus-sidecar"
-    volumes:
-      - /etc/prometheus:/etc/prometheus
-      - prometheus-storage:/prometheus
-
   grafana-sidecar:
     extends:
       file: ../sidecar-compose.yaml
@@ -44,25 +25,6 @@ services:
     volumes:
       - /etc/grafana:/etc/grafana
       - grafana-storage:/var/lib/grafana
-
-  loki-sidecar:
-    extends:
-      file: ../sidecar-compose.yaml
-      service: .sidecar
-    env_file: ../bitbucket/.tailscale.env
-    hostname: loki
-    volumes:
-      - loki-tailscale-data:/var/lib/tailscale
-    environment:
-      - TS_SERVE_PORT=3100
-
-  loki:
-    image: grafana/loki:latest
-    network_mode: "service:loki-sidecar"
-    restart: always
-    volumes:
-      - /etc/loki:/etc/loki
-      - loki-storage:/loki
 
 volumes:
   grafana-storage:
