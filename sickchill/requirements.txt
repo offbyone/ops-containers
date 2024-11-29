@@ -52,7 +52,9 @@ future==1.0.0
 gntp==1.0.3
     # via sickchill
 greenlet==3.1.1
-    # via sickchill
+    # via
+    #   sickchill
+    #   sqlalchemy
 guessit==3.8.0
     # via
     #   sickchill
@@ -139,8 +141,6 @@ requests-oauthlib==2.0.0
     # via python-twitter
 send2trash==1.8.3
     # via sickchill
-setuptools==75.4.0
-    # via -r requirements.in
 sickchill==2024.3.1
     # via -r requirements.in
 six==1.16.0
