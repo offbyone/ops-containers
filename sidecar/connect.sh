@@ -16,6 +16,11 @@ else
         # this is over the tailnet, so I'm fine with HTTP here too
         tailscale serve --yes --bg --http 80 localhost:${TS_SERVE_PORT}
     fi
+
+    if [ "${TS_FUNNEL:-no}" = "yes" ]; then
+        echo "Starting funnel"
+        tailscale funnel --bg ${TS_SERVE_PORT}
+    fi
 fi
 
 tailscale status
