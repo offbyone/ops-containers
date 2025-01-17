@@ -21,7 +21,6 @@ shell: build
 
 bitbucket-up: \
      (svc-up "atuin") \
-     (svc-up "bitbucket") \
      (svc-up "changedetection") \
      (svc-up "cobalt") \
      (svc-up "jackett") \
@@ -36,7 +35,6 @@ bitbucket-up: \
 
 bitbucket-down: \
      (svc-down "atuin") \
-     (svc-down "bitbucket") \
      (svc-down "changedetection") \
      (svc-down "cobalt") \
      (svc-down "jackett") \

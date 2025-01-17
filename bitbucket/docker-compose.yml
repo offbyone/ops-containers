@@ -6,7 +6,7 @@ services:
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    network_mode: "service:sidecar-dozzle"
+    network_mode: "service:sidecar"
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
