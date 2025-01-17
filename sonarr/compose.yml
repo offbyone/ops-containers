@@ -1,0 +1,49 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    hostname: sonarr
+    env_file: ../bitbucket/.tailscale.env
+    environment:
+      - TS_SERVE_PORT=8989
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    network_mode: "service:sidecar"
+    restart: unless-stopped
+    volumes:
+      - blob-media:/media
+      - sonarr-config:/config
+    environment:
+      - PGID=1000
+      - PUID=1000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+  exporter:
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: sonarr
+    restart: unless-stopped
+    network_mode: "service:sidecar"
+    environment:
+      - PORT=9707
+      - URL=http://localhost:8989
+    # APIKEY must be set in here
+    env_file: .exportarr.env
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+volumes:
+  tailscale-data:
+  blob-media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
+  sonarr-config:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/config/sonarr/
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
