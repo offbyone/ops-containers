@@ -44,6 +44,6 @@ volumes:
   sonarr-config:
     driver: local
     driver_opts:
-      type: cifs
-      device: //blob.lan.offby1.net/config/sonarr/
-      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
+      type: none
+      device: /etc/sonarr
+      o: bind
