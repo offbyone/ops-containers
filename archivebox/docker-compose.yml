@@ -111,14 +111,11 @@ services:
 
   novnc:
     image: theasp/novnc:latest
+    network_mode: service:sidecar
     environment:
       - DISPLAY_WIDTH=1920
       - DISPLAY_HEIGHT=1080
       - RUN_XTERM=no
-    ports:
-      # to view/control ArchiveBox's browser, visit: http://127.0.0.1:8080/vnc.html
-      # restricted to access from localhost by default because it has no authentication
-      - 127.0.0.1:8080:8080
 
   ### Example: Put Nginx in front of the ArchiveBox server for SSL termination and static file serving.
   # You can also any other ingress provider for SSL like Apache, Caddy, Traefik, Cloudflare Tunnels, etc.

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+here="$(unset CDPATH; cd "$(dirname "$0")"; pwd)"
+
+sudo docker compose --project-directory "$here" \
+  run --rm archivebox "$@"
