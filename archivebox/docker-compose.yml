@@ -19,7 +19,7 @@ x-container-user: &container-user
 services:
   sidecar:
     extends:
-      file: ../sidecar-compose.yaml
+      file: ../sidecar/compose.yaml
       service: .sidecar
     env_file: ../blob/.tailscale.env
     hostname: archivebox
