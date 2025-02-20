@@ -1,0 +1,21 @@
+services:
+  sidecar:
+    extends: ../sidecar-compose.yaml
+    service: .sidecar
+  env_file: ../blob/.tailscale.env
+  hostname: yacreader
+  environment:
+    - TS_SERVE_PORT=8080
+
+  yacreaderlibraryserver:
+    image: yacreader/yacreaderlibraryserver:latest
+    environment:
+      - PUID=1026
+      - PGID=100
+      - TZ=America/Los_Angeles
+    volumes:
+      - /volume1/config/yacreader:/config
+      - /volume1/Media/ebooks/Comics:/comics
+    ports:
+      - 9999:8080
+    restart: unless-stopped
