@@ -8,10 +8,12 @@ services:
       service: .sidecar
     hostname: calibre
     env_file: ../bitbucket/.tailscale.env
-    environment: TS_SERVE_PORT=8083
+    environment:
+      - TS_SERVE_PORT=8083
 
   server:
     image: crocodilestick/calibre-web-automated:latest
+    network_mode: service:sidecar
     container_name: calibre-web-automated
     environment:
       # Only change these if you know what you're doing
@@ -21,7 +23,7 @@ services:
       - TZ=UTC
     volumes:
       # CW users migrating should stop their existing CW instance, make a copy of the config folder, and bind that here to carry over all of their user settings ect.
-      - calibre-config:/config
+      - /mnt/blob-config/calibre-web/:/config
       # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
       - /mnt/media/incoming/calibre-ingest/:/cwa-book-ingest
       # If you don't have an existing library, CWA will automatically create one at the bind provided here
