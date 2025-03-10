@@ -139,8 +139,6 @@ requests-oauthlib==2.0.0
     # via python-twitter
 send2trash==1.8.3
     # via sickchill
-setuptools==75.4.0
-    # via -r requirements.in
 sickchill==2024.3.1
     # via -r requirements.in
 six==1.16.0
