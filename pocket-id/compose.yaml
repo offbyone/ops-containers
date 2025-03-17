@@ -3,7 +3,7 @@ services:
     extends:
       file: ../sidecar-compose.yaml
       service: .sidecar
-    hostname: calibre
+    hostname: id
     env_file: ../bitbucket/.tailscale.env
     environment:
       - TS_SERVE_PORT=80
