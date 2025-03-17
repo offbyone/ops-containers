@@ -14,7 +14,7 @@ services:
     environment:
       - TZ=Etc/UTC
     volumes:
-      - readarr-config:/config
+      - /etc/readarr/:/config
       - blob-media:/books
     network_mode: "service:sidecar"
     restart: always
@@ -38,4 +38,3 @@ volumes:
       type: cifs
       device: //blob.lan.offby1.net/Media/ebooks/library
       o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
-  readarr-config:
