@@ -25,4 +25,4 @@ services:
       start_period: 10s
 
 volumes:
-  - tailscale-data:
+  tailscale-data:
