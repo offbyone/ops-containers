@@ -23,15 +23,12 @@ services:
       - TZ=UTC
     volumes:
       # CW users migrating should stop their existing CW instance, make a copy of the config folder, and bind that here to carry over all of their user settings ect.
-      - /mnt/blob-config/calibre-web/:/config
+      - /etc/calibre-web/:/config
       # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
       - /mnt/media/incoming/calibre-ingest/:/cwa-book-ingest
       # If you don't have an existing library, CWA will automatically create one at the bind provided here
       - /mnt/media/ebooks/library/:/calibre-library
-    ports:
-      # Change the first number to change the port you want to access the Web UI, not the second
-      - 8083:8083
-    restart: unless-stopped
+    restart: always
 
 volumes:
   tailscale-data:
