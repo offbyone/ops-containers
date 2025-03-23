@@ -1,3 +1,0 @@
-[submodule "postmarks/postmarks"]
-	path = postmarks/postmarks
-	url = https://github.com/offbyone/postmarks.git
