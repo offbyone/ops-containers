@@ -52,3 +52,11 @@ svc-up name:
 
 svc-down name:
     cd {{ name }} && docker compose down
+
+update: update-precommit update-gha
+
+@update-precommit:
+    uvx --with pre-commit-uv pre-commit autoupdate -j3
+
+@update-gha:
+    uvx --from git+https://github.com/offbyone/gha-update@gha-without-pyproject gha-update
