@@ -1,0 +1,37 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    hostname: whisparr
+    env_file: ../bitbucket/.tailscale.env
+    environment:
+      - TS_SERVE_PORT=8989
+
+  whisparr:
+    image: lscr.io/linuxserver/whisparr:latest
+    network_mode: "service:sidecar"
+    restart: unless-stopped
+    volumes:
+      - blob-media:/media
+      - whisparr-config:/config
+    environment:
+      - PGID=1000
+      - PUID=1000
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+volumes:
+  tailscale-data:
+  blob-media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //blob.lan.offby1.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
+  sonarr-config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /etc/whisparr
+      o: bind
