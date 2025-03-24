@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
     volumes:
       - blob-media:/media
-      - whisparr-config:/config
+      - config:/config
     environment:
       - PGID=1000
       - PUID=1000
@@ -29,7 +29,7 @@ volumes:
       type: cifs
       device: //blob.lan.offby1.net/Media
       o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
-  sonarr-config:
+  config:
     driver: local
     driver_opts:
       type: none
