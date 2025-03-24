@@ -45,41 +45,45 @@ services:
 
 ### Media Management
 
-- **Radarr**: Movie management, connects to transmission and media storage
-- **Sonarr**: TV show management, replacement for SickChill
-- **Lidarr**: Music management, connects to transmission and media storage
-- **Readarr**: E-book and audiobook management
-- **Jackett**: Torrent site proxy/indexer
-- **Tautulli**: Plex server statistics and monitoring
+- **[Radarr](https://radarr.video/)**: Movie management, connects to transmission and media storage
+- **[Sonarr](https://sonarr.tv/)**: TV show management, replacement for SickChill
+- **[Lidarr](https://lidarr.audio/)**: Music management, connects to transmission and media storage
+- **[Readarr](https://readarr.com/)**: E-book and audiobook management
+- **[Jackett](https://github.com/Jackett/Jackett)**: Torrent site proxy/indexer
+- **[Tautulli](https://tautulli.com/)**: Plex server statistics and monitoring
 
 ### Media Libraries
 
-- **Calibre**: E-book management system
-- **Calibre-Web**: Web interface for Calibre library
-- **YACReader**: Comic/manga reader and library manager
-- **Immich**: Self-hosted photo and video backup solution
+- **[Calibre](https://calibre-ebook.com/)**: E-book management system
+- **[Calibre-Web](https://github.com/janeczku/calibre-web)**: Web interface for Calibre library
+- **[YACReader](https://www.yacreader.com/)**: Comic/manga reader and library manager
+- **[Immich](https://immich.app/)**: Self-hosted photo and video backup solution
 
 ### Web Services
 
-- **ArchiveBox**: Self-hosted web archive solution
-- **ChangeDetection**: Monitor website changes
-- **Cobalt**: YouTube and media downloader
-- **Pocket-ID**: Self-hosted authentication server
-- **Postmarks**: Bookmark manager
-- **BreezeWiki**: Privacy-focused wiki proxy
+- **[ArchiveBox](https://archivebox.io/)**: Self-hosted web archive solution
+- **[ChangeDetection](https://github.com/dgtlmoon/changedetection.io)**: Monitor website changes
+- **[Cobalt](https://github.com/wukko/cobalt)**: YouTube and media downloader
+- **[Pocket-ID](https://pocket-id.org/)**: Self-hosted authentication server
+- **[BreezeWiki](https://breezewiki.com/)**: Privacy-focused wiki proxy
 
 ### Monitoring & Metrics
 
-- **Prometheus**: Metrics collection and storage
-- **Metrics**: Various exporters (Plex, SNMP, UDM, etc.)
-- **OpenObserve**: Log management and analytics
-- **Victoria-Logs**: High-performance logs storage
+- **[Prometheus](https://prometheus.io/)**: Metrics collection and storage
+- **Metrics**: Collection of Prometheus exporters:
+  - **[Blackbox Exporter](https://github.com/prometheus/blackbox_exporter)**: Probes endpoints over HTTP, HTTPS, DNS, TCP and ICMP
+  - **[Plex Exporter](https://github.com/jrudio/plex-exporter)**: Monitors Plex Media Server metrics
+  - **[SNMP Exporter](https://github.com/prometheus/snmp_exporter)**: Collects metrics from SNMP-enabled devices
+  - **[Synology Monitor](https://github.com/breadlysm/prometheus-synology-exporter)**: Monitors Synology NAS systems
+  - **[UDM Poller](https://github.com/unpoller/unpoller)**: Collects metrics from Ubiquiti UniFi devices
+- **[OpenObserve](https://openobserve.ai/)**: Log management and analytics
+- **[Victoria-Logs](https://docs.victoriametrics.com/VictoriaLogs/)**: High-performance logs storage
 
 ### Utility Services
 
-- **Atuin**: Shell history sync server
-- **Hoarder**: Data collection service
-- **OFSM**: Factorio server _not enabled_
+- **[Atuin](https://atuin.sh/)**: Shell history sync server
+- **[Hoarder](https://github.com/normal-computing/hoarder)**: Data collection service
+- **[OFSM](https://factorio.com/blog/post/fff-341)**: Factorio server _not enabled_
 
 ## Host Environment
 
