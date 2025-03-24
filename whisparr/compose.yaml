@@ -9,7 +9,7 @@ services:
       - TS_SERVE_PORT=8989
 
   whisparr:
-    image: lscr.io/linuxserver/whisparr:latest
+    image: ghcr.io/thespad/whisparr:latest
     network_mode: "service:sidecar"
     restart: unless-stopped
     volumes:
