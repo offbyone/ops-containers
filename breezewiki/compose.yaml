@@ -10,7 +10,7 @@ services:
 
   breezewiki:
     container_name: breezewiki
-    image: ghcr.io/offbyone/breezewiki:latest
+    image: ghcr.io/offbyone/breezewiki:main
     restart: unless-stopped
     network_mode: service:sidecar
     volumes:
