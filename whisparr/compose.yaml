@@ -6,7 +6,7 @@ services:
     hostname: whisparr
     env_file: ../bitbucket/.tailscale.env
     environment:
-      - TS_SERVE_PORT=8989
+      - TS_SERVE_PORT=6969
 
   whisparr:
     image: ghcr.io/thespad/whisparr:latest
