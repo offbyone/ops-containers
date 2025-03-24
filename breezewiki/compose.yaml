@@ -1,0 +1,22 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    hostname: breezewiki
+    env_file: ../bitbucket/.tailscale.env
+    environment:
+      - TS_SERVE_PORT=10416
+
+  breezewiki:
+    container_name: breezewiki
+    image: ghcr.io/offbyone/breezewiki:latest
+    build:
+      context: .
+    restart: unless-stopped
+    network_mode: service:sidecar
+    volumes:
+      - "./config.ini:/app/config.ini"
+
+volumes:
+  tailscale-data:
