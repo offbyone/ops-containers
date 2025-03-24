@@ -150,7 +150,12 @@ jobs:
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
           pattern: digests-${{ matrix.image }}-*
-          path: /tmp/digests-${{ matrix.image }}
+          path: /tmp/digests-download
+
+      - name: Prepare digests
+        run: |
+          mkdir -p /tmp/digests-${{ matrix.image }}
+          find /tmp/digests-download -type f -name "*" -not -path "*/\.*" -exec cp {} /tmp/digests-${{ matrix.image }}/ \;
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
       - name: Docker meta
