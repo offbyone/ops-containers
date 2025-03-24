@@ -11,8 +11,6 @@ services:
   breezewiki:
     container_name: breezewiki
     image: ghcr.io/offbyone/breezewiki:latest
-    build:
-      context: .
     restart: unless-stopped
     network_mode: service:sidecar
     volumes:
