@@ -9,7 +9,7 @@ services:
     environment:
       - TS_SERVE_PORT=8787
 
-  readarr:
+  service:
     image: lscr.io/linuxserver/readarr:develop
     environment:
       - TZ=Etc/UTC

@@ -7,7 +7,7 @@ services:
   environment:
     - TS_SERVE_PORT=8080
 
-  yacreaderlibraryserver:
+  service:
     image: yacreader/yacreaderlibraryserver:latest
     environment:
       - PUID=1026

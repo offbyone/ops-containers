@@ -11,7 +11,7 @@ services:
     environment:
       - TS_SERVE_PORT=8083
 
-  server:
+  service:
     image: crocodilestick/calibre-web-automated:latest
     network_mode: service:sidecar
     container_name: calibre-web-automated

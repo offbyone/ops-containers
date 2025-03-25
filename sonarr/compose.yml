@@ -8,7 +8,7 @@ services:
     environment:
       - TS_SERVE_PORT=8989
 
-  sonarr:
+  service:
     image: lscr.io/linuxserver/sonarr:latest
     network_mode: "service:sidecar"
     restart: unless-stopped

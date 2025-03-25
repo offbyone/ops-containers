@@ -9,7 +9,7 @@ services:
     environment:
       - TS_SERVE_PORT=8686
 
-  lidarr:
+  service:
     image: lscr.io/linuxserver/lidarr:latest
     environment:
       - PUID=1000

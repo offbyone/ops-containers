@@ -11,7 +11,7 @@ services:
     environment:
       - TS_SERVE_PORT=3000
 
-  web:
+  service:
     image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
     restart: always
     volumes:
