@@ -1,0 +1,111 @@
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: "wandering-shop-monitor"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "statsd"
+    http_sd_configs:
+      - url: http://shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9242/
+    relabel_configs:
+      - source_labels: [__meta_tailscale_device_tag]
+        regex: "tag:node"
+        action: keep
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: tailscale_hostname
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: hostname
+      - source_labels: [__meta_tailscale_device_name]
+        target_label: tailscale_name
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: instance
+      - source_labels: [__address__]
+        regex: "(.*)"
+        replacement: $1:9102
+        target_label: __address__
+
+  - job_name: node
+    http_sd_configs:
+      - url: http://shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9242/
+    relabel_configs:
+      - source_labels: [__meta_tailscale_device_tag]
+        regex: "tag:node"
+        action: keep
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: tailscale_hostname
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: hostname
+      - source_labels: [__meta_tailscale_device_name]
+        target_label: tailscale_name
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: instance
+      - source_labels: [__address__]
+        regex: "(.*)"
+        replacement: $1:9100
+        target_label: __address__
+
+  - job_name: cadvisor
+    http_sd_configs:
+      - url: http://shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9242/
+    relabel_configs:
+      - source_labels: [__meta_tailscale_device_tag]
+        regex: "tag:node"
+        action: keep
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: tailscale_hostname
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: hostname
+      - source_labels: [__meta_tailscale_device_name]
+        target_label: tailscale_name
+      - source_labels: [__meta_tailscale_device_hostname]
+        target_label: instance
+      - source_labels: [__address__]
+        regex: "(.*)"
+        replacement: $1:9180
+        target_label: __address__
+
+  - job_name: "nginx"
+    static_configs:
+      - targets:
+          - "shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9113"
+
+  - job_name: "ssl"
+    metrics_path: "/probe"
+    static_configs:
+      - targets:
+          - "wandering.shop:443"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 100.124.42.62:9219 # SSL exporter.
+
+  - job_name: "blackbox"
+    metrics_path: "/probe"
+    static_configs:
+      - targets:
+          - "https://wandering.shop:443/about"
+          - "https://wandering.shop:443/public/local"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: shop-probe.tail9a8e5.ts.net:9115 # shop-probe

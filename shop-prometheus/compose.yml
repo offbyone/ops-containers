@@ -1,0 +1,29 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../${TAILNET_CONFIG:-blob}/.tailscale.env
+    hostname: ${TAILNET_HOST_NAME:-prometheus}
+    volumes:
+      - prometheus-tailscale-data:/var/lib/tailscale
+    environment:
+      - TS_SERVE_PORT=9090
+
+  prometheus:
+    image: "prom/prometheus:v3.0.0"
+    restart: always
+    network_mode: "service:sidecar"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-storage:/prometheus
+
+volumes:
+  prometheus-storage:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /volume1/Backups/wandering.shop/prometheus-data
+
+  prometheus-tailscale-data:
