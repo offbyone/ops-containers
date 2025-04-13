@@ -5,8 +5,8 @@ services:
     extends:
       file: ../sidecar-compose.yaml
       service: .sidecar
-    env_file: ../blob/.tailscale.env
-    hostname: prometheus
+    env_file: ../${TAILNET_CONFIG:-blob}/.tailscale.env
+    hostname: ${TAILNET_HOST_NAME:-prometheus}
     volumes:
       - prometheus-tailscale-data:/var/lib/tailscale
     environment:
