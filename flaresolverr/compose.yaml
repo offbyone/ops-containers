@@ -1,0 +1,24 @@
+---
+services:
+  sidecar:
+    extends:
+      file: ../sidecar/compose.yaml
+      service: .sidecar
+    env_file: ../bitbucket/.tailscale.env
+    hostname: flaresolverr
+    environment:
+      - TS_SERVE_PORT=8191
+
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    network_mode: service:sidecar
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=America/Los_Angeles
+    restart: always
+
+volumes:
+  tailscale-data:
