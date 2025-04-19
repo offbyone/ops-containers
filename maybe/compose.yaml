@@ -56,7 +56,7 @@ services:
     image: ghcr.io/maybe-finance/maybe:latest
     volumes:
       - app-storage:/rails/storage
-    network-mode: service:sidecar
+    network_mode: service:sidecar
     restart: unless-stopped
     environment:
       <<: *rails_env
@@ -68,7 +68,7 @@ services:
 
   worker:
     image: ghcr.io/maybe-finance/maybe:latest
-    network-mode: service:sidecar
+    network_mode: service:sidecar
     command: bundle exec sidekiq
     restart: unless-stopped
     depends_on:
@@ -79,7 +79,7 @@ services:
 
   db:
     image: postgres:16
-    network-mode: service:sidecar
+    network_mode: service:sidecar
     restart: unless-stopped
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -93,7 +93,7 @@ services:
 
   redis:
     image: redis:latest
-    network-mode: service:sidecar
+    network_mode: service:sidecar
     restart: unless-stopped
     volumes:
       - redis-data:/data
