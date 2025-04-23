@@ -14,6 +14,7 @@ services:
     image: grafana/loki:latest
     network_mode: "service:sidecar"
     restart: always
+    user: "1026:100"
     volumes:
       - /volume1/config/loki:/etc/loki
       - storage:/loki
