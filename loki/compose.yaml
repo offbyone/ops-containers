@@ -15,9 +15,14 @@ services:
     network_mode: "service:sidecar"
     restart: always
     volumes:
-      - /etc/loki:/etc/loki
+      - /volume1/config/loki:/etc/loki
       - storage:/loki
 
 volumes:
   storage:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /volume1/Backups/loki-data
   tailscale-data:
