@@ -1,0 +1,23 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../blob/.tailscale.env
+    hostname: loki
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    environment:
+      - TS_SERVE_PORT=3100
+
+  loki:
+    image: grafana/loki:latest
+    network_mode: "service:sidecar"
+    restart: always
+    volumes:
+      - /etc/loki:/etc/loki
+      - storage:/loki
+
+volumes:
+  storage:
+  tailscale-data:
