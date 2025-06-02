@@ -8,7 +8,7 @@ services:
     volumes:
       - tailscale-data:/var/lib/tailscale
     environment:
-      - TS_SERVE_PORT=3100
+      - TS_SERVE_PORT=9428
 
   victoria-logs:
     image: docker.io/victoriametrics/victoria-logs:v1.0.0-victorialogs
@@ -18,8 +18,6 @@ services:
       - -journald.streamFields=_STREAM_ID,_SYSTEMD_UNIT,_HOSTNAME
       - -retention.maxDiskSpaceUsageBytes=1TiB
       - -retentionPeriod=1y
-    ports:
-      - "9428:9428"
     volumes:
       - /volume1/Backups/victoria-logs-data:/victoria-logs-data
 
