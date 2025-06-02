@@ -109,3 +109,8 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: shop-probe.tail9a8e5.ts.net:9115 # shop-probe
+
+  - job_name: "sidekiq"
+    static_configs:
+      - targets:
+          - "shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9292"
