@@ -1,5 +1,3 @@
-name: prometheus
-
 services:
   sidecar:
     extends:
@@ -16,6 +14,10 @@ services:
     image: "prom/prometheus:v3.0.0"
     restart: always
     network_mode: "service:sidecar"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
     volumes:
       - /volume1/config/prometheus:/etc/prometheus
       - prometheus-storage:/prometheus
