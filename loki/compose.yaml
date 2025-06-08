@@ -14,12 +14,21 @@ services:
     image: grafana/loki:latest
     network_mode: "service:sidecar"
     restart: always
-    user: "1026:100"
+    # command:
+    #   - "-config.file=/etc/loki-2/local-config.yaml"
     volumes:
-      - /volume1/config/loki:/etc/loki
+      - config:/etc/loki/
       - storage:/loki
 
+  shell:
+    image: busybox:latest
+    volumes:
+      - config:/etc/loki/
+    restart: never
+    command: "true"
+
 volumes:
+  config:
   storage:
     driver: local
     driver_opts:

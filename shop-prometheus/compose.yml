@@ -17,6 +17,10 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - prometheus-storage:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-otlp-receiver"
 
 volumes:
   prometheus-storage:
