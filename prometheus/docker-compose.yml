@@ -15,12 +15,18 @@ services:
     restart: always
     network_mode: "service:sidecar"
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
       - "--web.enable-lifecycle"
     volumes:
       - /volume1/config/prometheus:/etc/prometheus
       - prometheus-storage:/prometheus
+    healthcheck:
+      test: ["CMD", "/bin/promtool", "check", "ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
 
 volumes:
   prometheus-storage:
