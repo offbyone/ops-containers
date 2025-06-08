@@ -18,7 +18,7 @@ services:
     #   - "-config.file=/etc/loki-2/local-config.yaml"
     volumes:
       - config:/etc/loki/
-      - storage:/loki
+      - storage:/loki/
 
   shell:
     image: busybox:latest
@@ -29,6 +29,12 @@ services:
 
 volumes:
   config:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /volume1/config/loki
+
   storage:
     driver: local
     driver_opts:
