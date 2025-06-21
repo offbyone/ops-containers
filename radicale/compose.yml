@@ -1,0 +1,44 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../bitbucket/.tailscale.env
+    hostname: caldav
+    environment:
+      - TS_SERVE_PORT=8000
+    image: ghcr.io/offbyone/sidecar:main
+
+  proxy:
+    image: caddy:2
+    network_mode: service:sidecar
+    volumes:
+      - ./etc/caddy/:/etc/caddy/:ro
+    command:
+      - caddy
+      - run
+      - --config
+      - /etc/caddy/Caddyfile
+      - --watch
+
+  radicale:
+    image: ghcr.io/kozea/radicale:nightly-20250618
+    network_mode: service:sidecar
+    healthcheck:
+      test: curl -f http://127.0.0.1:5232 || exit 1
+      interval: 30s
+      retries: 3
+    volumes:
+      - ./etc/radicale:/etc/radicale
+      - ./data/:/var/lib/radicale
+
+  vdirsyncer:
+    build:
+      context: ./vdirsyncer
+    network_mode: service:sidecar
+    volumes:
+      - ./etc/vdirsync:/etc/vdirsyncer:ro
+      - ./data/:/var/lib/radicale
+
+volumes:
+  tailscale-data:

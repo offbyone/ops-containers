@@ -1,0 +1,7 @@
+:8000
+
+reverse_proxy :5232 {
+	header_up X-Remote-User {http.request.header.Tailscale-User-Login}
+	header_up X-Forwarded-Proto https
+	header_up -HTTP-Upgrade-Insecure-Requests
+}

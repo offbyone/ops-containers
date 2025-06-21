@@ -1,0 +1,34 @@
+[server]
+# Bind to all interfaces inside the container
+# hosts = 0.0.0.0:5232
+# Disable built-in TLS; handled by Caddy
+ssl = False
+
+[auth]
+type = http_x_remote_user
+lc_username = true
+strip_domain = false
+
+# This tells Radicale to accept users authenticated by the proxy via the X-Remote-User header
+
+[rights]
+# type = owner_only
+type = from_file
+file = /etc/radicale/rights
+
+[storage]
+type = multifilesystem
+filesystem_folder = /var/lib/radicale/collections
+
+[logging]
+level = info
+response_content_on_debug = true
+request_header_on_debug = true
+rights_rule_doesnt_match_on_debug = true
+
+[headers]
+Access-Control-Allow-Origin = *
+
+[web]
+type = internal
+# type = none

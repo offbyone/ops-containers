@@ -1,0 +1,36 @@
+[general]
+status_path = "/etc/vdirsync/status/"
+
+[storage contacts_personal]
+type = "filesystem"
+path = "/var/lib/radicale/collections/collection-root/offby1@offby1.net/Default"
+fileext = ".vcf"
+
+[storage contacts_shared]
+type = "filesystem"
+path = "/var/lib/radicale/collections/collection-root/offby1@offby1.net/fastmail.Shared"
+fileext = ".vcf"
+
+[storage contacts_fm_personal]
+type = "carddav"
+url = "https://carddav.fastmail.com/dav/addressbooks/user/offby1@offby1.net/Default/"
+username = "offby1@offby1.net"
+password = "FILL_THIS_IN"
+
+[storage contacts_fm_global]
+type = "carddav"
+url = "https://carddav.fastmail.com/dav/addressbooks/user/offby1@offby1.net/masteruser_auto3cg3bji@fastmail.com.Shared/"
+username = "offby1@offby1.net"
+password = "FILL_THIS_IN"
+
+[pair contacts_offby1]
+a = contacts_personal
+b = contacts_fm_personal
+collections = null
+conflict_resolution = "a wins"
+
+[pair contacts_shared]
+a = contacts_shared
+b = contacts_fm_global
+collections = null
+conflict_resolution = "a wins"
