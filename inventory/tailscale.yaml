@@ -1,0 +1,7 @@
+---
+plugin: offbyone.ansible.tailscale
+client_secret: "{{ lookup('env', 'TAILSCALE_CLIENT_SECRET') }}"
+client_id: "{{ lookup('env', 'TAILSCALE_CLIENT_ID') }}"
+tailnet: offby1.net
+tags:
+  - role-infra-container

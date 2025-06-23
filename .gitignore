@@ -5,3 +5,5 @@ docker-compose.void.yml
 /*/.exportarr.env
 .tailscale.exporter.env
 bitbucket/.tailscale.env
+
+**/.claude/settings.local.json

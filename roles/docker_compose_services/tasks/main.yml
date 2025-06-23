@@ -1,0 +1,12 @@
+---
+- name: Include repository clone tasks
+  ansible.builtin.import_tasks: clone.yml
+  tags:
+    - clone
+    - always
+
+- name: Include docker compose service tasks
+  ansible.builtin.import_tasks: compose.yml
+  tags:
+    - deploy
+    - services

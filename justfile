@@ -60,3 +60,11 @@ update: update-precommit update-gha
 
 @update-gha:
     uvx --from git+https://github.com/offbyone/gha-update@gha-without-pyproject gha-update
+
+deps: pip-compile pip-install
+
+pip-compile:
+    uv pip compile requirements.in > requirements.txt
+
+pip-install:
+    uv pip install --requirements requirements.txt

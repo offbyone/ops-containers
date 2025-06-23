@@ -1,0 +1,24 @@
+---
+# Path where the repository will be cloned
+repo_path: "/opt/ansible-docker-compose/ops-containers"
+
+# Git repository URL
+repo_url: "https://github.com/offbyone/ops-containers.git"
+
+# Git branch to clone
+repo_branch: "main"
+
+# Whether to use a GitHub Personal Access Token for cloning
+use_github_pat: false
+
+# GitHub PAT vault variable name (will be looked up if use_github_pat is true)
+github_pat_vault_var: "github_pat"
+
+# List of services to deploy (should be overridden in host_vars)
+services: []
+
+# Default health check timeout (in seconds)
+health_check_timeout: 300
+
+# Default health check retries
+health_check_retries: 5

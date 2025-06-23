@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Your Name
+  description: Deploy and manage Docker Compose services from a repository
+  company: Your Company
+  license: MIT
+  min_ansible_version: 2.10
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - docker
+    - compose
+    - containers
+
+dependencies: []

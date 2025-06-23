@@ -1,0 +1,43 @@
+---
+- name: Check if GitHub PAT is needed and available
+  block:
+    - name: Verify GitHub PAT is defined
+      ansible.builtin.assert:
+        that: github_pat is defined
+        fail_msg: "GitHub PAT is required but not defined in vault"
+      when: use_github_pat | bool
+  when: use_github_pat | bool
+
+- name: Ensure parent directory exists
+  ansible.builtin.file:
+    path: "{{ repo_path | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Check if repository exists
+  ansible.builtin.stat:
+    path: "{{ repo_path }}/.git"
+  register: git_repo_stat
+
+- name: Clone repository
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_path }}"
+    version: "{{ repo_branch }}"
+    force: true
+    accept_hostkey: true
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+  when: not git_repo_stat.stat.exists
+
+- name: Update repository if it exists
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_path }}"
+    version: "{{ repo_branch }}"
+    force: true
+    update: true
+  environment:
+    GIT_TERMINAL_PROMPT: 0
+  when: git_repo_stat.stat.exists
+  register: git_update
