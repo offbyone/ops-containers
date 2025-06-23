@@ -11,7 +11,7 @@ services:
       - TS_SERVE_PORT=9428
 
   victoria-logs:
-    image: docker.io/victoriametrics/victoria-logs:v1.0.0-victorialogs
+    image: docker.io/victoriametrics/victoria-logs:v1.23.3-victorialogs
     network_mode: service:sidecar
     restart: always
     command:
