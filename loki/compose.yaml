@@ -24,7 +24,6 @@ services:
     image: busybox:latest
     volumes:
       - config:/etc/loki/
-    restart: never
     command: "true"
 
 volumes:

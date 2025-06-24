@@ -1,0 +1,16 @@
+---
+# Enable passwordless sudo for prime
+ansible_become_method: sudo
+# Prime requires a password for sudo
+ansible_become_pass: "{{ prime_sudo_password }}"
+services:
+  - name: audiobookshelf
+    compose_file: compose.yml
+  - name: hoarder
+    compose_file: compose.yml
+  - name: immich
+    compose_file: docker-compose.yml
+  - name: maybe
+    compose_file: compose.yaml
+  - name: tautulli
+    compose_file: docker-compose.yml

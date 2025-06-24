@@ -1,4 +1,8 @@
 ---
 - hosts: all
+  environment:
+    PATH: /usr/local/bin:{{ ansible_env.PATH }}
+  vars_files:
+    - secrets.yml
   roles:
     - role: docker_compose_services

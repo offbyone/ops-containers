@@ -1,0 +1,31 @@
+services:
+  - name: atuin
+    compose_file: docker-compose.yml
+  - name: breezewiki
+    compose_file: compose.yaml
+  - name: changedetection
+    compose_file: docker-compose.yml
+  - name: cobalt
+    compose_file: docker-compose.yml
+  - name: flaresolverr
+    compose_file: compose.yaml
+  - name: jackett
+    compose_file: docker-compose.yml
+  - name: lidarr
+    compose_file: docker-compose.yml
+  - name: metrics
+    compose_file: docker-compose.yml
+  - name: openobserve
+    compose_file: docker-compose.yml
+  - name: radarr
+    compose_file: docker-compose.yml
+  - name: radicale
+    compose_file: compose.yml
+  - name: readarr
+    compose_file: docker-compose.yml
+  - name: sonarr
+    compose_file: compose.yml
+  - name: tandoor
+    compose_file: compose.yml
+  - name: whisparr
+    compose_file: compose.yaml
