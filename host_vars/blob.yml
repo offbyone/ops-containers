@@ -2,12 +2,12 @@ repo_path: "{{ ansible_user_dir }}/ops-containers"
 services:
   - name: archivebox
     compose_file: docker-compose.yml
-  - name: loki
-    compose_file: compose.yaml
+  # - name: loki
+  #   compose_file: compose.yaml
   - name: prometheus
     compose_file: docker-compose.yml
-  - name: shop-prometheus
-    compose_file: compose.yml
+  # - name: shop-prometheus
+  #   compose_file: compose.yml
   - name: victoria-logs
     compose_file: compose.yaml
   - name: yacreader
