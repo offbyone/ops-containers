@@ -1,51 +1,51 @@
-services:
-  sidecar:
-    extends:
-      file: ../sidecar-compose.yaml
-      service: .sidecar
-    env_file: ../bitbucket/.tailscale.env
-    hostname: tandoor
-    environment:
-      - TS_SERVE_PORT=8000
-    image: ghcr.io/offbyone/sidecar:main
-
-  db_recipes:
-    restart: always
-    image: postgres:16-alpine
-    network_mode: service:sidecar
-    volumes:
-      - ./postgresql:/var/lib/postgresql/data
-    env_file:
-      - ./.env
-
-  web_recipes:
-    restart: always
-    image: vabene1111/recipes
-    network_mode: service:sidecar
-    env_file:
-      - ./.env
-    volumes:
-      - staticfiles:/opt/recipes/staticfiles
-      # Do not make this a bind mount, see https://docs.tandoor.dev/install/docker/#volumes-vs-bind-mounts
-      - ./nginx_config:/opt/recipes/nginx/conf.d
-      - ./mediafiles:/opt/recipes/mediafiles
-    depends_on:
-      - db_recipes
-
-  nginx_recipes:
-    image: nginx:mainline-alpine
-    restart: always
-    network_mode: service:sidecar
-    env_file:
-      - ./.env
-    depends_on:
-      - web_recipes
-    volumes:
-      # Do not make this a bind mount, see https://docs.tandoor.dev/install/docker/#volumes-vs-bind-mounts
-      - ./nginx_config:/etc/nginx/conf.d:ro
-      - staticfiles:/static:ro
-      - ./mediafiles:/media:ro
-
-volumes:
-  staticfiles:
-  tailscale-data:
++services:
++  sidecar:
++    extends:
++      file: ../sidecar-compose.yaml
++      service: .sidecar
++    env_file: ../bitbucket/.tailscale.env
++    hostname: tandoor
++    environment:
++      - TS_SERVE_PORT=8000
++    image: ghcr.io/offbyone/sidecar:main
++
++  db_recipes:
++    restart: always
++    image: postgres:16-alpine
++    network_mode: service:sidecar
++    volumes:
++      - ./postgresql:/var/lib/postgresql/data
++    env_file:
++      - ./.env
++
++  web_recipes:
++    restart: always
++    image: vabene1111/recipes
++    network_mode: service:sidecar
++    env_file:
++      - ./.env
++    volumes:
++      - staticfiles:/opt/recipes/staticfiles
++      # Do not make this a bind mount, see https://docs.tandoor.dev/install/docker/#volumes-vs-bind-mounts
++      - ./nginx_config:/opt/recipes/nginx/conf.d
++      - ./mediafiles:/opt/recipes/mediafiles
++    depends_on:
++      - db_recipes
++
++  nginx_recipes:
++    image: nginx:mainline-alpine
++    restart: always
++    network_mode: service:sidecar
++    env_file:
++      - ./.env
++    depends_on:
++      - web_recipes
++    volumes:
++      # Do not make this a bind mount, see https://docs.tandoor.dev/install/docker/#volumes-vs-bind-mounts
++      - ./nginx_config:/etc/nginx/conf.d:ro
++      - staticfiles:/static:ro
++      - ./mediafiles:/media:ro
++
++volumes:
++  staticfiles:
++  tailscale-data:
