@@ -13,7 +13,7 @@ services:
     image: public.ecr.aws/zinclabs/openobserve:latest
     network_mode: "service:sidecar"
     restart: always
-    env_file: .logs.env
+    env_file: .env.local
     volumes:
       - data:/data
 volumes:
