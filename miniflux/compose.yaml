@@ -1,0 +1,36 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../bitbucket/.tailscale.env
+    hostname: miniflux
+    environment:
+      - TS_SERVE_PORT=8080
+  miniflux:
+    image: miniflux/miniflux:latest
+    network_mode: service:sidecar
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.local
+    environment:
+      - RUN_MIGRATIONS=1
+      - CREATE_ADMIN=1
+  db:
+    image: postgres:17-alpine
+    network_mode: service:sidecar
+    env_file:
+      - .env.local
+    environment:
+      - POSTGRES_DB=miniflux
+    volumes:
+      - miniflux-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      interval: 10s
+      start_period: 30s
+volumes:
+  miniflux-db:
+  tailscale-data:
