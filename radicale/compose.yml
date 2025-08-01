@@ -35,7 +35,6 @@ services:
   vdirsyncer:
     build:
       context: ./vdirsyncer
-    network_mode: service:sidecar
     volumes:
       - ./etc/vdirsync:/etc/vdirsyncer:ro
       - ./data/:/var/lib/radicale

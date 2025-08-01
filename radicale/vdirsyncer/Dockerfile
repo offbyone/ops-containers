@@ -1,18 +1,11 @@
+# syntax=docker/dockerfile:1.9
 FROM debian:bookworm-slim
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    ca-certificates \
-    gnupg \
-    supervisor \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+# Security-conscious organizations should package/review uv themselves.
+COPY --from=ghcr.io/astral-sh/uv:0.7 /uv /bin/uv
 
-# Install uv
-RUN curl -Ls https://astral.sh/uv/install.sh | bash
-
-ENV PATH="/root/.cargo/bin:$PATH"
+RUN uv tool add supervisor
+RUN uv tool add vdirsyncer
 
 # Set up directories
 RUN mkdir -p /etc/supervisor /etc/vdirsyncer /var/log/supervisor /app
@@ -23,10 +16,4 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 # Optional: copy static config or mount via volume
 # COPY vdirsyncer.conf /etc/vdirsyncer/config
 
-WORKDIR /app
-
-# Install vdirsyncer via uv
-RUN uv venv && \
-    uv pip install vdirsyncer
-
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/bin/uv", "tool", "run", "supervisord", "-c", "/etc/supervisor/supervisord.conf"]
