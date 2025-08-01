@@ -7,3 +7,4 @@ docker-compose.void.yml
 bitbucket/.tailscale.env
 
 **/.claude/settings.local.json
+.vault-password
