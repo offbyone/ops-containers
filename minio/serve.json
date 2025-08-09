@@ -1,34 +1,34 @@
 {
     "TCP": {
-        "80": {
-            "HTTP": true
-        },
         "443": {
             "HTTPS": true
         },
-        "8443": {
+        "9000": {
+            "HTTPS": true
+        },
+        "9001": {
             "HTTPS": true
         }
     },
     "Web": {
-        "hosom-t0mzm8e5j.octoca.ts.net": {
+        "s3.camel-tortoise.ts.net:443": {
             "Handlers": {
                 "/": {
-                    "Proxy": "http://localhost:80"
+                    "Proxy": "https+insecure://localhost:9001"
                 }
             }
         },
-        "hosom-t0mzm8e5j.octoca.ts.net:443": {
+        "s3.camel-tortoise.ts.net:9000": {
             "Handlers": {
                 "/": {
-                    "Proxy": "https+insecure://localhost:8443"
+                    "Proxy": "https+insecure://localhost:9001"
                 }
             }
         },
-        "hosom-t0mzm8e5j.octoca.ts.net:8443": {
+        "s3.camel-tortoise.ts.net:9000": {
             "Handlers": {
                 "/": {
-                    "Proxy": "https+insecure://localhost:8443"
+                    "Proxy": "https+insecure://localhost:9000"
                 }
             }
         }
