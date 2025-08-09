@@ -14,21 +14,21 @@
         "s3.camel-tortoise.ts.net:443": {
             "Handlers": {
                 "/": {
-                    "Proxy": "https+insecure://localhost:9001"
+                    "Proxy": "http://localhost:9001"
                 }
             }
         },
         "s3.camel-tortoise.ts.net:9000": {
             "Handlers": {
                 "/": {
-                    "Proxy": "https+insecure://localhost:9001"
+                    "Proxy": "http://localhost:9000"
                 }
             }
         },
-        "s3.camel-tortoise.ts.net:9000": {
+        "s3.camel-tortoise.ts.net:9001": {
             "Handlers": {
                 "/": {
-                    "Proxy": "https+insecure://localhost:9000"
+                    "Proxy": "http://localhost:9001"
                 }
             }
         }
