@@ -14,5 +14,7 @@ services:
     compose_file: compose.yml
   - name: sharry
     compose_file: compose.yml
+  - name: minio
+    compose_file: compose.yaml
 
 become_for_docker: true

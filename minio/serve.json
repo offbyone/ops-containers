@@ -1,0 +1,36 @@
+{
+    "TCP": {
+        "80": {
+            "HTTP": true
+        },
+        "443": {
+            "HTTPS": true
+        },
+        "8443": {
+            "HTTPS": true
+        }
+    },
+    "Web": {
+        "hosom-t0mzm8e5j.octoca.ts.net": {
+            "Handlers": {
+                "/": {
+                    "Proxy": "http://localhost:80"
+                }
+            }
+        },
+        "hosom-t0mzm8e5j.octoca.ts.net:443": {
+            "Handlers": {
+                "/": {
+                    "Proxy": "https+insecure://localhost:8443"
+                }
+            }
+        },
+        "hosom-t0mzm8e5j.octoca.ts.net:8443": {
+            "Handlers": {
+                "/": {
+                    "Proxy": "https+insecure://localhost:8443"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../blob/.tailscale.env
+    hostname: s3
+    # not explicitly serving this, gonna set
+    # it up using the tailscale API. See the README.md
+  minio:
+    image: quay.io/minio/minio:latest
+    network_mode: service:sidecar
+    volumes:
+      - "/volume1/minio/ops-containers/:/data"
+    env_file:
+      - .env
+    command:
+      - server
+      - /data
+      - -console-address
+      - ":9001"
+
+volumes:
+  tailscale-data:
