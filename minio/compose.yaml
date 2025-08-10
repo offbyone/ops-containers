@@ -9,17 +9,17 @@ services:
     env_file: ../blob/.tailscale.env
     environment:
       - TS_HOSTNAME=s3
-    network_mode: service:netns
+    # network_mode: service:netns
     # not explicitly serving this, gonna set
     # it up using the tailscale API. See the README.md
-    depends_on:
-      minio:
-        condition: service_healthy
+    # depends_on:
+    #   minio:
+    #     condition: service_healthy
 
   minio:
     image: quay.io/minio/minio:latest
     user: "1026:1026"
-    network_mode: service:netns
+    network_mode: service:sidecar
     volumes:
       - "/volume1/minio/ops-containers/:/data"
     env_file:
@@ -29,7 +29,9 @@ services:
     command:
       - server
       - /data
-      - -console-address
+      - --address
+      - ":9002"
+      - --console-address
       - ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]

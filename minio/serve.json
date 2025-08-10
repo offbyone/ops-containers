@@ -5,9 +5,6 @@
         },
         "9000": {
             "HTTPS": true
-        },
-        "9001": {
-            "HTTPS": true
         }
     },
     "Web": {
@@ -21,14 +18,7 @@
         "s3.camel-tortoise.ts.net:9000": {
             "Handlers": {
                 "/": {
-                    "Proxy": "http://localhost:9000"
-                }
-            }
-        },
-        "s3.camel-tortoise.ts.net:9001": {
-            "Handlers": {
-                "/": {
-                    "Proxy": "http://localhost:9001"
+                    "Proxy": "http://localhost:9002"
                 }
             }
         }
