@@ -134,6 +134,15 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+  check:
+    runs-on: ubuntu-latest
+    name: Check builds
+    needs:
+      - build
+    steps:
+      - name: no-op
+        run: exit 0
+
   merge:
     runs-on: ubuntu-latest
     name: Merge the builds for ${{ matrix.image }}
