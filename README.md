@@ -46,11 +46,13 @@ services:
 ### Media Management
 
 - **[Radarr](https://radarr.video/)**: Movie management, connects to transmission and media storage
-- **[Sonarr](https://sonarr.tv/)**: TV show management, replacement for SickChill
+- **[Sonarr](https://sonarr.tv/)**: TV show management
 - **[Lidarr](https://lidarr.audio/)**: Music management, connects to transmission and media storage
 - **[Readarr](https://readarr.com/)**: E-book and audiobook management
+- **[Whisparr](https://whisparr.com/)**: Adult content management
 - **[Jackett](https://github.com/Jackett/Jackett)**: Torrent site proxy/indexer
 - **[Tautulli](https://tautulli.com/)**: Plex server statistics and monitoring
+- **[FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)**: Proxy server to bypass Cloudflare protection
 
 ### Media Libraries
 
@@ -66,6 +68,13 @@ services:
 - **[Cobalt](https://github.com/wukko/cobalt)**: YouTube and media downloader
 - **[Pocket-ID](https://pocket-id.org/)**: Self-hosted authentication server
 - **[BreezeWiki](https://breezewiki.com/)**: Privacy-focused wiki proxy
+- **[Miniflux](https://miniflux.app/)**: RSS feed reader
+- **[Tandoor](https://tandoor.dev/)**: Recipe management system
+
+### Storage & Infrastructure
+
+- **[Minio](https://min.io/)**: S3-compatible object storage
+- **[Radicale](https://radicale.org/)**: CalDAV and CardDAV server
 
 ### Monitoring & Metrics
 
@@ -78,12 +87,16 @@ services:
   - **[UDM Poller](https://github.com/unpoller/unpoller)**: Collects metrics from Ubiquiti UniFi devices
 - **[OpenObserve](https://openobserve.ai/)**: Log management and analytics
 - **[Victoria-Logs](https://docs.victoriametrics.com/VictoriaLogs/)**: High-performance logs storage
+- **[Loki](https://grafana.com/oss/loki/)**: Log aggregation system
+- **[Shop-Prometheus](https://github.com/prometheus/prometheus)**: Separate Prometheus instance for shop monitoring
 
 ### Utility Services
 
 - **[Atuin](https://atuin.sh/)**: Shell history sync server
 - **[Hoarder](https://github.com/normal-computing/hoarder)**: Data collection service
-- **[OFSM](https://factorio.com/blog/post/fff-341)**: Factorio server _not enabled_
+- **[SickChill](https://sickchill.github.io/)**: TV show management (legacy)
+- **[Maybe](https://maybe.co/)**: Personal finance management
+- **[Watchtower](https://containrrr.dev/watchtower/)**: Automatic container updates
 
 ## Host Environment
 
@@ -91,3 +104,13 @@ Most containers require a 64-bit architecture. While some can run on 32-bit ARM,
 
 - **NUC (bitbucket)**: Primary host for resource-intensive services
 - **NUC (prime)**: Primary host for video and AI-using services
+- **Synology NAS (blob)**: Storage-intensive services
+
+## Management
+
+This repository includes:
+
+- **Ansible playbooks** for deployment automation
+- **Justfile** with common tasks for service management
+- **Pre-commit hooks** for code quality
+- **GitHub Actions** for container builds
