@@ -1,0 +1,22 @@
+---
+name: readeck
+
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    hostname: readeck
+    env_file: ../blob/.tailscale.env
+    environment:
+      - TS_SERVE_PORT=8000
+
+  service:
+    image: codeberg.org/readeck/readeck:${READECK_VERSION:-latest}
+    restart: always
+    volumes:
+      - /volume1/Backups/readeck:/data
+    network_mode: service:sidecar
+
+volumes:
+  tailscale-data:
