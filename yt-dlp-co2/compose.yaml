@@ -1,0 +1,18 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../blob/.tailscale.env
+    hostname: yt-dlp-co2
+    environment:
+      - TS_SERVE_PORT=8000
+    image: ghcr.io/offbyone/sidecar:main
+  service:
+    image: carbonatedwaterorg/yt-dlp-co2:latest
+    network_mode: service:sidecar
+    volumes:
+      - /volume1/Media/video/yt-dlp/:/app/downloads
+
+volumes:
+  tailscale-data:
