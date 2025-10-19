@@ -20,7 +20,7 @@ scrape_configs:
 
   - job_name: "statsd"
     http_sd_configs:
-      - url: http://shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9242/
+      - url: http://web-8gb-hil-3.tail9a8e5.ts.net:9242/
     relabel_configs:
       - source_labels: [__meta_tailscale_device_tag]
         regex: "tag:node"
@@ -40,7 +40,7 @@ scrape_configs:
 
   - job_name: node
     http_sd_configs:
-      - url: http://shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9242/
+      - url: http://web-8gb-hil-3.tail9a8e5.ts.net:9242/
     relabel_configs:
       - source_labels: [__meta_tailscale_device_tag]
         regex: "tag:node"
@@ -60,7 +60,7 @@ scrape_configs:
 
   - job_name: cadvisor
     http_sd_configs:
-      - url: http://shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9242/
+      - url: http://web-8gb-hil-3.tail9a8e5.ts.net:9242/
     relabel_configs:
       - source_labels: [__meta_tailscale_device_tag]
         regex: "tag:node"
@@ -81,7 +81,7 @@ scrape_configs:
   - job_name: "nginx"
     static_configs:
       - targets:
-          - "shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9113"
+          - "web-8gb-hil-3.tail9a8e5.ts.net:9113"
 
   - job_name: "ssl"
     metrics_path: "/probe"
@@ -113,4 +113,4 @@ scrape_configs:
   - job_name: "sidekiq"
     static_configs:
       - targets:
-          - "shop-data-s-4vcpu-16gb-320gb-intel-nyc3-01.tail9a8e5.ts.net:9292"
+          - "ubuntu-8gb-hil-1.tail9a8e5.ts.net:9292"
