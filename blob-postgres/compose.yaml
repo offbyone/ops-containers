@@ -1,0 +1,51 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../${TAILNET_CONFIG:-blob}/.tailscale.env
+    hostname: ${TAILNET_HOST_NAME:-blob-postgres}
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+    environment:
+      - TS_SERVE_PORT=9090
+
+  postgresql:
+    image: "postgres:17"
+    restart: always
+    network_mode: "service:sidecar"
+    user: postgres
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c hba_file=/etc/postgresql/pg_hba.conf
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+    volumes:
+      - data:/var/lib/postgresql/data
+      - config:/etc/postgresql
+      - logs:/var/log/postgresql
+
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /volume1/postgres/data
+  config:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /volume1/postgres/config
+  logs:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /volume1/postgres/logs
+
+  tailscale-data:
