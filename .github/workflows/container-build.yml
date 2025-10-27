@@ -101,7 +101,7 @@ jobs:
         if: steps.skip_check.outputs.DO_NOT_BUILD != 'true'
       - name: Log in to the Github Container registry
         if: steps.skip_check.outputs.DO_NOT_BUILD != 'true'
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -185,7 +185,7 @@ jobs:
         with:
           images: ghcr.io/offbyone/${{ matrix.image }}
       - name: Log in to the Github Container registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
