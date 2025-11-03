@@ -1,4 +1,4 @@
-FROM tailscale/tailscale:v1.86.5
+FROM tailscale/tailscale:v1.90.6
 COPY connect.sh /connect.sh
 COPY --from=ghcr.io/jqlang/jq:1.8.0 /jq /usr/local/bin/jq
 HEALTHCHECK --interval=5s --timeout=10s --start-period=20s --retries=3 \
