@@ -1,0 +1,39 @@
+---
+name: bichon
+
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../${TAILNET_CONFIG:-blob}/.tailscale.env
+    hostname: ${TAILNET_HOST_NAME:-bichon}
+    environment:
+      - TS_SERVE_PORT=15630
+
+  bichon:
+    image: rustmailer/bichon:latest
+    restart: always
+    network_mode: service:sidecar
+    container_name: bichon
+    working_dir: /data
+    environment:
+      - BICHON_LOG_LEVEL=info
+      - BICHON_ROOT_DIR=/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:15630/api/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+    volumes:
+      - data:/data
+
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /volume1/Backups/email
+  tailscale-data:
