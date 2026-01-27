@@ -1,0 +1,68 @@
+# Docker Compose for Production Deployment
+# Full stack: app, worker, and Redis
+
+x-volumes: &volumes
+  - ${GDL_APP_CONFIG:-./config}:/config:ro
+  - ${GDL_APP_DATA:-./data}:/data
+  - ${GDL_APP_DOWNLOADS:-./downloads}:/downloads
+
+x-gdl-env: &g-dl-env
+  GALLERY_DL_CONFIG: /config/gallery-dl.conf
+  GALLERY_DL_APP_DOWNLOADS: /downloads
+  GALLERY_DL_APP_DATABASE: /data/gallery-dl-app.db
+
+name: gdlapp
+
+services:
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - gallery-dl-network
+
+  web:
+    image: ghcr.io/offbyone/gallery-dl-app:latest
+    container_name: gallery-dl-web
+    ports:
+      - "34100:8000"
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      <<: *g-dl-env
+    volumes: *volumes
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - gallery-dl-network
+    command: uvicorn gallery_dl_app.app:app --host 0.0.0.0 --port 8000
+
+  worker:
+    image: ghcr.io/offbyone/gallery-dl-app:latest
+    container_name: gallery-dl-worker
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      <<: *g-dl-env
+    volumes: *volumes
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - gallery-dl-network
+    command: python -m gallery_dl_app.worker
+
+networks:
+  gallery-dl-network:
+    driver: bridge
+
+volumes:
+  redis-data:
