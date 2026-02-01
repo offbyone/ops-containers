@@ -1,0 +1,21 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../blob/.tailscale.env
+    hostname: issued
+    environment:
+      - TS_SERVE_PORT=8181
+
+  service:
+    image: ghcr.io/metalogico/issued:latest
+    restart: unless-stopped
+    network_mode: service:sidecar
+    volumes:
+      - /volume1/Media/ebooks/Comics:/comics:ro
+      - issued_data:/app/data
+
+volumes:
+  issued_data:
+  tailscale-data:
