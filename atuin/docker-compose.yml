@@ -11,12 +11,12 @@ services:
     image: ghcr.io/offbyone/sidecar:main
 
   atuin:
-    image: ghcr.io/atuinsh/atuin:18.4.0
+    image: ghcr.io/atuinsh/atuin:e737ba5 # v18.13.3
     network_mode: "service:sidecar"
     restart: always
     depends_on:
       - db
-    command: server start
+    command: start
     volumes:
       - atuin-config:/config
     environment:
