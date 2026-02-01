@@ -267,14 +267,14 @@ host_path = "/volume1/@appdata/ContainerManager/all_shares/Media"
    }
 
    parameters {
-     source = "//blob.lan.offby1.net/Media"
+     source = "//blob.camel-tortoise.ts.net/Media"
    }
 
    mount_options {
      mount_flags = [
        "file_mode=0777",
        "dir_mode=0777",
-       "addr=192.168.5.184"
+       "addr=100.118.226.154"
      ]
    }
    ```
@@ -392,9 +392,9 @@ If you encounter issues with volume mounting:
 3. **Check for client connectivity issues**:
    ```bash
    # On the client node:
-   ping blob.lan.offby1.net
+   ping blob.camel-tortoise.ts.net
    # Test SMB connectivity:
-   smbclient -U your_username //blob.lan.offby1.net/Media
+   smbclient -U your_username //blob.camel-tortoise.ts.net/Media
    ```
 
 4. **Review allocation status and logs**:

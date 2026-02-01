@@ -27,11 +27,11 @@ volumes:
     driver: local
     driver_opts:
       type: cifs
-      device: //blob.lan.offby1.net/Media/ebooks/library
-      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+      device: //blob.camel-tortoise.ts.net/Media/ebooks/library
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},vers=3.0,iocharset=utf8,file_mode=0777,dir_mode=0777,nounix,noserverino
   calibre-config:
     driver: local
     driver_opts:
       type: cifs
-      device: //blob.lan.offby1.net/config/calibre/
-      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.1.10
+      device: //blob.camel-tortoise.ts.net/config/calibre/
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},vers=3.0,iocharset=utf8,file_mode=0777,dir_mode=0777,nounix,noserverino

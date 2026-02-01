@@ -28,8 +28,8 @@ volumes:
     driver: local
     driver_opts:
       type: cifs
-      device: //blob.lan.offby1.net/Media
-      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},file_mode=0777,dir_mode=0777,addr=192.168.5.184
+      device: //blob.camel-tortoise.ts.net/Media
+      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},vers=3.0,iocharset=utf8,file_mode=0777,dir_mode=0777,nounix,noserverino
   sickchill-data:
     driver: local
     driver_opts:

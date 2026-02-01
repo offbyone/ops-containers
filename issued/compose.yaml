@@ -12,6 +12,8 @@ services:
     image: ghcr.io/metalogico/issued:latest
     restart: unless-stopped
     network_mode: service:sidecar
+    environment:
+      - DATA_DIR=/app/data
     volumes:
       - /volume1/Media/ebooks/Comics:/comics:ro
       - issued_data:/app/data

@@ -133,14 +133,14 @@ To enable CIFS/SMB volume support in Nomad:
    }
 
    parameters {
-     source = "//blob.lan.offby1.net/Media"
+     source = "//blob.camel-tortoise.ts.net/Media"
    }
 
    mount_options {
      mount_flags = [
        "file_mode=0777",
        "dir_mode=0777",
-       "addr=192.168.5.184"
+       "addr=100.118.226.154"
      ]
    }
    ```
