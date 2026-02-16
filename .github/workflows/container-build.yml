@@ -25,7 +25,7 @@ jobs:
       changed: ${{ steps.changed_images.outputs.changed }}
 
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: "recursive"
 
@@ -89,7 +89,7 @@ jobs:
         arch: ["aarch64", "amd64"]
 
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Skip the build on the platform if `.skip-${{ matrix.arch }}` exists in ${{ matrix.image }}
         id: skip_check
         run: |
@@ -97,17 +97,17 @@ jobs:
             echo DO_NOT_BUILD=true >> "$GITHUB_OUTPUT"
           fi
       # - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
-      - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
         if: steps.skip_check.outputs.DO_NOT_BUILD != 'true'
       - name: Log in to the Github Container registry
         if: steps.skip_check.outputs.DO_NOT_BUILD != 'true'
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/metadata-action@318604b99e75e41977312d83839a89be02ca4893 # v5.9.0
+      - uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         if: steps.skip_check.outputs.DO_NOT_BUILD != 'true'
         id: meta
         with:
@@ -123,7 +123,7 @@ jobs:
       - name: Build and push by digest
         if: steps.skip_check.outputs.DO_NOT_BUILD != 'true'
         id: build
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: ./${{ matrix.image }}
           platforms: linux/${{ matrix.arch }}
@@ -178,14 +178,14 @@ jobs:
           mkdir -p /tmp/digests-${{ matrix.image }}
           find /tmp/digests-download -type f -name "*" -not -path "*/\.*" -exec cp {} /tmp/digests-${{ matrix.image }}/ \;
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@318604b99e75e41977312d83839a89be02ca4893 # v5.9.0
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
           images: ghcr.io/offbyone/${{ matrix.image }}
       - name: Log in to the Github Container registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
