@@ -8,11 +8,15 @@ services:
     compose_file: compose.yaml
   - name: yacreader
     compose_file: compose.yml
+    up: false
   - name: sharry
     compose_file: compose.yml
   - name: minio
     compose_file: compose.yaml
+    up: false
   - name: blob-postgres
     compose_file: compose.yaml
+  - name: shop-prometheus
+    compose_file: compose.yml
 
 become_for_docker: true

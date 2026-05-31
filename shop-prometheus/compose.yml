@@ -3,6 +3,9 @@ services:
     extends:
       file: ../sidecar-compose.yaml
       service: .sidecar
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     env_file: ../${TAILNET_CONFIG:-blob}/.tailscale.env
     hostname: ${TAILNET_HOST_NAME:-prometheus}
     volumes:
