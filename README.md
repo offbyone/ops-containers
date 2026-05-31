@@ -145,11 +145,18 @@ ansible-playbook playbook-ops-containers.yml --limit blob -e service=minio
 #### Pulling images
 
 Image pulls use each compose file's own policy by default. Pass `-e pull=true`
-to pull images before bringing services up:
+to pull images before bringing services up. Unlike `up`, pulling runs for real
+even under `--check`, so you can refresh images without otherwise touching the
+host:
 
 ```bash
 ansible-playbook playbook-ops-containers.yml --limit blob -e pull=true
 
 # combine with a single service
 ansible-playbook playbook-ops-containers.yml --limit blob -e service=prometheus -e pull=true
+
+# pull images for real, but don't bring anything up or down
+ansible-playbook playbook-ops-containers.yml --limit blob -e pull_only=true
 ```
+
+Pulling only applies to services that are being brought up (`up` not `false`).

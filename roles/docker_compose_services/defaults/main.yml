@@ -22,8 +22,13 @@ services: []
 service: ""
 
 # Pull images before bringing services up (override on the CLI: `-e pull=true`).
-# When false the compose file's own pull policy is used.
+# Pulling runs even under --check. When false the compose file's own pull
+# policy is used at deploy time.
 pull: false
+
+# Pull images but do not bring services up/down (override: `-e pull_only=true`).
+# Implies pulling; the deploy step is skipped entirely.
+pull_only: false
 
 # Default health check timeout (in seconds)
 health_check_timeout: 300

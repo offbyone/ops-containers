@@ -24,6 +24,23 @@
   loop_control:
     label: "{{ item.item.name }}"
 
+- name: Pull service images
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ repo_path }}/{{ item.path | default(item.name) }}"
+    files:
+      - "{{ item.compose_file | default('compose.yml') }}"
+  loop: "{{ _services }}"
+  loop_control:
+    label: "{{ item.name }}"
+  become: "{{ become_for_docker }}"
+  # Only pull for services being brought up, when pulling was requested.
+  when:
+    - pull | bool or pull_only | bool
+    - item.up | default(true)
+  # Pulling is an explicit request, so do it for real even under --check
+  # (unlike `up`, a pull won't touch running containers).
+  check_mode: false
+
 - name: Deploy services (up unless up=false brings them down)
   community.docker.docker_compose_v2:
     # `wait` is skipped under --check: the module's dry-run can't actually
@@ -35,11 +52,30 @@
       - "{{ item.compose_file | default('compose.yml') }}"
     # `up: false` on a service brings it down; otherwise it is brought up.
     state: "{{ 'present' if item.up | default(true) else 'absent' }}"
-    # Pull images when `-e pull=true`; otherwise use the compose pull policy.
-    pull: "{{ 'always' if pull | bool else 'policy' }}"
+    # Image pulling is handled by the dedicated "Pull service images" task
+    # above (which also works under --check), so use the compose pull policy.
+    pull: policy
     remove_orphans: true
   loop: "{{ _services }}"
   loop_control:
     label: "{{ item.name }} ({{ 'up' if item.up | default(true) else 'down' }})"
   register: compose_result
   become: "{{ become_for_docker }}"
+  # `pull_only` skips the up/down deploy entirely.
+  when: not pull_only | bool
+  # Under --check the module runs `docker compose up --dry-run`, which evaluates
+  # `depends_on` health conditions against the *current* container state. A
+  # pre-existing stopped/unhealthy container (or a dependent of one) is then
+  # reported as a failure even though no deploy was attempted. Don't fail the
+  # play for those dry-run artifacts; they are surfaced as a warning below.
+  failed_when: not ansible_check_mode and compose_result.failed | default(false)
+
+- name: Warn about services that could not be previewed under --check
+  ansible.builtin.debug:
+    msg: "{{ item.item.name }} could not be previewed: {{ (item.msg | default('')).splitlines() | map('trim') | reject('equalto', '') | list | last | default('unknown error') }}"
+  loop: "{{ compose_result.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when:
+    - ansible_check_mode
+    - item.rc | default(0) | int != 0
