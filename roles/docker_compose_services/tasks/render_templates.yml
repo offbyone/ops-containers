@@ -1,0 +1,43 @@
+---
+# Render any *.template files found in the managed service directories.
+# Each template is rendered (on the control node) and written to the remote
+# at the same relative path with the trailing ".template" stripped, e.g.
+#   immich/.env.template  ->  <repo_path>/immich/.env
+#
+# Templates themselves are excluded from the sync step, so only the rendered
+# output ever lands on the remote.
+# Honour `-e service=<name>`: render only that service's templates, matching
+# the same filter compose.yml applies. When `service` is unset, render all of
+# the host's services.
+- name: Build local service directory paths
+  ansible.builtin.set_fact:
+    _template_search_dirs: >-
+      {{ (services if not service
+          else services | selectattr('name', 'equalto', service) | list)
+         | map(attribute='name')
+         | map('regex_replace', '^', playbook_dir ~ '/')
+         | list }}
+
+- name: Find template files for managed services
+  ansible.builtin.find:
+    paths: "{{ _template_search_dirs }}"
+    patterns: "*.template"
+    recurse: true
+    # Most templates are dotfiles (e.g. atuin/.env.template). find skips
+    # hidden files unless this is set, which would silently leave every
+    # .env unrendered on the remote.
+    hidden: true
+  delegate_to: localhost
+  register: found_templates
+
+- name: Render templates to remote service directories
+  ansible.builtin.template:
+    src: "{{ item.path }}"
+    dest: "{{ repo_path }}/{{ item.path | relpath(playbook_dir) | regex_replace('\\.template$', '') }}"
+    # No mode set on purpose: leave the mode untouched on files that already
+    # exist on the host (preserving e.g. 0664), and fall back to the remote
+    # umask for brand-new renders.
+  loop: "{{ found_templates.files }}"
+  loop_control:
+    label: "{{ item.path | relpath(playbook_dir) | regex_replace('\\.template$', '') }}"
+  become: "{{ become_for_docker }}"

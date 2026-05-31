@@ -1,8 +1,14 @@
 ---
-- name: Include repository clone tasks
-  ansible.builtin.import_tasks: clone.yml
+- name: Sync compose definitions to remote
+  ansible.builtin.import_tasks: sync.yml
   tags:
-    - clone
+    - sync
+    - always
+
+- name: Render service templates to remote
+  ansible.builtin.import_tasks: render_templates.yml
+  tags:
+    - templates
     - always
 
 - name: Include docker compose service tasks

@@ -1,0 +1,58 @@
+---
+# playbook-cleanup-unmanaged.yml
+#
+# One-shot playbook to remove unmanaged service directories and leftover
+# .git artifacts from the remote repo_path. Safe to run with --check first.
+#
+# Usage:
+#   ansible-playbook playbook-cleanup-unmanaged.yml --check --diff
+#   ansible-playbook playbook-cleanup-unmanaged.yml
+#
+- name: Clean up unmanaged services and git artifacts
+  hosts: all
+  vars_files:
+    - secrets.yml
+  vars:
+    # Uses repo_path from host_vars or role defaults
+    _repo_path: "{{ repo_path | default('/opt/ansible-docker-compose/ops-containers') }}"
+    # Shared files/dirs that are NOT services but belong on the remote
+    shared_items:
+      - sidecar-compose.yaml
+
+  tasks:
+    - name: Check for .git directory
+      ansible.builtin.stat:
+        path: "{{ _repo_path }}/.git"
+      register: git_dir
+
+    - name: Remove .git directory
+      ansible.builtin.file:
+        path: "{{ _repo_path }}/.git"
+        state: absent
+      diff: false
+      when: git_dir.stat.exists
+
+    - name: Enumerate directories on remote
+      ansible.builtin.find:
+        paths: "{{ _repo_path }}"
+        file_type: directory
+        recurse: false
+      register: remote_dirs
+
+    - name: Build list of managed names
+      ansible.builtin.set_fact:
+        managed_names: "{{ services | map(attribute='name') | list + shared_items + [inventory_hostname] }}"
+
+    - name: Identify unmanaged directories
+      ansible.builtin.set_fact:
+        unmanaged_dirs: "{{ remote_dirs.files | map(attribute='path') | map('basename') | difference(managed_names) | sort | list }}"
+
+    - name: Show unmanaged directories that would be removed
+      ansible.builtin.debug:
+        var: unmanaged_dirs
+
+    - name: Remove unmanaged service directories
+      ansible.builtin.file:
+        path: "{{ _repo_path }}/{{ item }}"
+        state: absent
+      loop: "{{ unmanaged_dirs }}"

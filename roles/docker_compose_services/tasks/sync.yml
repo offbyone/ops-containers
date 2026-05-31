@@ -1,0 +1,84 @@
+---
+- name: Ensure destination directory exists
+  ansible.builtin.file:
+    path: "{{ repo_path }}"
+    state: directory
+    mode: "0755"
+
+# NOTE: delete is intentionally NOT enabled here. The remote repo_path holds
+# both synced repo content and runtime state living side by side (rendered
+# *.env files, container-created data dirs, keys, local overrides). rsync
+# --delete would remove that runtime state, and its --delete generator also
+# fails trying to opendir() root-owned data dirs (e.g. tandoor/postgresql) that
+# ansible_user can't read. Removing whole *unmanaged* service dirs is handled
+# deliberately by playbook-cleanup-unmanaged.yml instead.
+- name: Sync compose definitions to remote
+  ansible.posix.synchronize:
+    src: "{{ playbook_dir }}/"
+    dest: "{{ repo_path }}/"
+    recursive: true
+    rsync_opts:
+      - "--itemize-changes"
+      - "--filter=':- .gitignore'"
+      - "--exclude=.git/"
+      - "--exclude=.jj/"
+      - "--exclude=.venv/"
+      - "--exclude=*.template"
+      - "--exclude=sidecar/"
+      - "--exclude=inventory/"
+      - "--exclude=host_vars/"
+      - "--exclude=group_vars/"
+      - "--exclude=roles/"
+      - "--exclude=ansible.cfg"
+      - "--exclude=playbook-*.yml"
+      - "--exclude=secrets.yml"
+      - "--exclude=requirements.in"
+      - "--exclude=requirements.txt"
+      - "--exclude=mise.toml"
+      - "--exclude=justfile"
+      - "--exclude=.pre-commit-config.yaml"
+      - "--exclude=.envrc"
+      - "--exclude=.envrc.local"
+      - "--exclude=.env"
+      - "--exclude=.sops.yaml"
+      - "--exclude=.sops-key"
+      - "--exclude=.vault-password"
+      - "--exclude=.claude/"
+      - "--exclude=.disabled/"
+      - "--exclude=.github/"
+      - "--exclude=AGENTS.md"
+      - "--exclude=docs/"
+  register: sync_result
+  # The itemized rsync output is one cryptic line per path and is extremely
+  # noisy under --diff. Suppress that auto-rendered diff and emit a concise
+  # summary in the next task instead (full list still available with -v).
+  diff: false
+
+# stdout_lines holds the --itemize-changes lines, each "<flags> <path>".
+# A path is newly created when its itemize flags contain "+++" (e.g.
+# "<f+++++++"); anything else is a metadata/content update to an existing path.
+# The "./" root entry is dropped as noise.
+- name: Summarize sync changes
+  vars:
+    _changes: >-
+      {{ sync_result.stdout_lines | default([])
+         | reject('equalto', '')
+         | reject('search', '\s\./$')
+         | list }}
+    _new: "{{ _changes | select('search', '\\+\\+\\+') | list }}"
+    _updated: "{{ _changes | reject('search', '\\+\\+\\+') | list }}"
+  block:
+    - name: Show sync summary
+      ansible.builtin.debug:
+        msg: >-
+          Sync to {{ inventory_hostname }}:
+          {{ _changes | length }} path(s) changed
+          ({{ _new | length }} new, {{ _updated | length }} updated).{{
+          ' Run with -v to list them.' if _changes | length > 0 else '' }}
+
+    - name: List changed paths
+      ansible.builtin.debug:
+        msg: >-
+          {{ (_changes | map('regex_replace', '^\S+\s+', '') | list) }}
+        verbosity: 1
+      when: _changes | length > 0
