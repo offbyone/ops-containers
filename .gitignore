@@ -8,3 +8,4 @@ bitbucket/.tailscale.env
 
 **/.claude/settings.local.json
 .vault-password
+.sops-key

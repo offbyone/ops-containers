@@ -1,4 +1,5 @@
-ansible
+# clamped to this version because blob's python is otherwise too old
+ansible>=11.0,<13.0
 click
 httpx
 authlib

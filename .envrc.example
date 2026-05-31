@@ -1,0 +1,8 @@
+use dotenv
+use requirements-in
+
+env_vars_required TAILSCALE_CLIENT_ID \
+    TAILSCALE_CLIENT_SECRET \
+    BLOB_USERNAME \
+    BLOB_PASSWORD \
+    SOPS_AGE_KEY_FILE

@@ -1,5 +1,5 @@
 ---
-plugin: offbyone.ansible.tailscale
+plugin: offby1.ansible.tailscale
 client_secret: "{{ lookup('env', 'TAILSCALE_CLIENT_SECRET') }}"
 client_id: "{{ lookup('env', 'TAILSCALE_CLIENT_ID') }}"
 tailnet: offby1.net

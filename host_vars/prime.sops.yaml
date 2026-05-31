@@ -1,0 +1,16 @@
+github_pat: ENC[AES256_GCM,data:7bOr1jfjmn8SAsV6MvSqedWQ5WYX9uXfgtc6wVkF35BF2Je5NqPw4g==,iv:eBA1o3SvjGBcczGPt2mDGsU4JdC0oiAaN/rhJOWZAAk=,tag:JBc+/kJXwsL3UtIdx19B7Q==,type:str]
+sops:
+    age:
+        - recipient: age1w0c42y4lgr46r8sq76h32ehk3gkuwp2e2e92894k0c3v9hjuksdsq6sgdx
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBZMjE5WVdSd3dzL1N6clNt
+            TC9xOS9HSGRERW1MejNoYjV3anZEaWxaQXhvCjZNVitmS1FabDRSelNyc2Y5U214
+            TlU4ZkZvUDBnc2ZVQUtIMUVlUWU3dnMKLS0tIDVZVTNIV0NVbmNzclhFNjZKSnJk
+            Slh0b09nZERDejkxOTc5OFJta1ErWGsK4h9WR29PLOwZN11VP0yescIa03mtP3aG
+            Hw0EfxTbLhXBjVAEXZ8SK+knmDGjXB6+oyLmDPKuMk5UafMwvYbXgQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-05-31T14:36:52Z"
+    mac: ENC[AES256_GCM,data:mX4+keuRPOSZglPWghAjsUb3rYUjt53Gn9pbb5bjQdIi222TaKATLD3CH2o+Zyg85zJimYyE5MkVu5b1BNVFguObdDtkr4haOW8xaqaYXGzqtXDN2zgEbawy4MDNVyzja47rrNnXAETOZPlzqPGAAf1jv/Hv0mwiTjwFYjECOWk=,iv:Q8xzdrCmzqmRbSwIuUtr5SgDt5m522xuA19WDdsyfdI=,tag:Up2fDneBQ0fsCaKyztr5fQ==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.12.2
