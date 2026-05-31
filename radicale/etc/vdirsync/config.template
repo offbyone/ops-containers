@@ -15,13 +15,13 @@ fileext = ".vcf"
 type = "carddav"
 url = "https://carddav.fastmail.com/dav/addressbooks/user/offby1@offby1.net/Default/"
 username = "offby1@offby1.net"
-password = "FILL_THIS_IN"
+password = "{{ radicale.fastmail.carddav_password }}"
 
 [storage contacts_fm_global]
 type = "carddav"
 url = "https://carddav.fastmail.com/dav/addressbooks/user/offby1@offby1.net/masteruser_auto3cg3bji@fastmail.com.Shared/"
 username = "offby1@offby1.net"
-password = "FILL_THIS_IN"
+password = "{{ radicale.fastmail.carddav_password }}"
 
 [pair contacts_offby1]
 a = contacts_personal
