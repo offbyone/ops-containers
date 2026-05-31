@@ -9,16 +9,24 @@
 
 name: immich
 
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:2283"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:2283"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":true}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
+      service: .simple-sidecar
     hostname: immich
-    env_file: ../prime/.tailscale.env
-    environment:
-      - TS_SERVE_PORT=2283
-      - TS_FUNNEL=yes
 
   server:
     container_name: immich_server

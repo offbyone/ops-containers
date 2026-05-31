@@ -1,12 +1,21 @@
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:8989"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:8989"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
+      service: .simple-sidecar
     hostname: sonarr
-    env_file: ../bitbucket/.tailscale.env
-    environment:
-      - TS_SERVE_PORT=8989
 
   service:
     image: lscr.io/linuxserver/sonarr:latest

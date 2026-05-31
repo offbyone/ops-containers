@@ -2,8 +2,11 @@
 configs:
   ts-serve:
     content: |
-      {"TCP":{"443":{"HTTPS":true}},
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
       "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:5055"}}},
+          "$${TS_CERT_DOMAIN}:80":
           {"Handlers":{"/":
           {"Proxy":"http://127.0.0.1:5055"}}}},
       "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":true}}

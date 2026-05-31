@@ -13,15 +13,24 @@ x-rails-env: &rails_env
   DB_PORT: 5432
   REDIS_URL: redis://localhost:6379/1
 
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:3000"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:3000"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
-    env_file: ../prime/.tailscale.env
+      service: .simple-sidecar
     hostname: maybe
-    environment:
-      - TS_SERVE_PORT=3000
 
   # ===========================================================================
   # Example Docker Compose file

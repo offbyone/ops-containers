@@ -1,13 +1,21 @@
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:8000"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:8000"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
-    env_file: ../bitbucket/.tailscale.env
+      service: .simple-sidecar
     hostname: caldav
-    environment:
-      - TS_SERVE_PORT=8000
-    image: ghcr.io/offbyone/sidecar:main
 
   proxy:
     image: caddy:2

@@ -1,15 +1,21 @@
 ---
 name: calibre-web
 
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:8083"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
+      service: .simple-sidecar
     hostname: calibre
-    env_file: ../bitbucket/.tailscale.env
-    environment:
-      - TS_SERVE_PORT=8083
 
   service:
     image: crocodilestick/calibre-web-automated:latest

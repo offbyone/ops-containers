@@ -1,12 +1,21 @@
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:13378"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:13378"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
-    env_file: ../prime/.tailscale.env
+      service: .simple-sidecar
     hostname: audiobookshelf
-    environment:
-      - TS_SERVE_PORT=13378
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
     network_mode: service:sidecar

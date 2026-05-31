@@ -1,14 +1,22 @@
 ---
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:8888"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:8888"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":true}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
-    env_file: ../bitbucket/.tailscale.env
+      service: .simple-sidecar
     hostname: atuin
-    environment:
-      - TS_SERVE_PORT=8888
-    image: ghcr.io/offbyone/sidecar:main
 
   atuin:
     image: ghcr.io/atuinsh/atuin:e737ba5 # v18.13.3

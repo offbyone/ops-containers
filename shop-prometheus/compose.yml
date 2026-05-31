@@ -1,17 +1,27 @@
+---
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:9090"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:9090"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
 services:
   sidecar:
     extends:
       file: ../sidecar-compose.yaml
-      service: .sidecar
+      service: .simple-sidecar
     dns:
       - 8.8.8.8
       - 8.8.4.4
-    env_file: ../${TAILNET_CONFIG:-blob}/.tailscale.env
-    hostname: ${TAILNET_HOST_NAME:-prometheus}
+    hostname: prometheus
     volumes:
       - prometheus-tailscale-data:/var/lib/tailscale
-    environment:
-      - TS_SERVE_PORT=9090
 
   prometheus:
     image: "prom/prometheus:v3.0.0"
