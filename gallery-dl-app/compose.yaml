@@ -48,6 +48,18 @@ services:
   worker:
     image: ghcr.io/offbyone/gallery-dl-app:latest
     container_name: gallery-dl-worker
+    # The image bakes in an HTTP healthcheck against :8000 (for the web
+    # service). The worker doesn't serve HTTP, so that probe can never pass.
+    # `compose up --wait` also refuses to wait on a container with no
+    # healthcheck at all, so override it with a trivial probe that passes as
+    # soon as the container is running.
+    # TODO: replace with a real worker liveness check (e.g. redis reachability).
+    healthcheck:
+      test: ["CMD", "true"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
     environment:
       REDIS_URL: redis://redis:6379/0
       <<: *g-dl-env
