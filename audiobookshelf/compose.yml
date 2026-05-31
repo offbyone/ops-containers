@@ -1,0 +1,24 @@
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .sidecar
+    env_file: ../prime/.tailscale.env
+    hostname: audiobookshelf
+    environment:
+      - TS_SERVE_PORT=13378
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    network_mode: service:sidecar
+    volumes:
+      - /mnt/media/audio/books:/audiobooks
+      - /mnt/media/audio/podcasts:/podcasts
+      - /etc/audiobookshelf:/config
+      - /var/lib/audiobookshelf:/metadata
+    environment:
+      - TZ=America/Los_Angeles
+      - PORT=13378
+    restart: always
+
+volumes:
+  tailscale-data:
