@@ -1,5 +1,9 @@
 shop_prometheus:
-    tailnet_config_unencrypted: CHANGEME
+    tailnet_config_unencrypted: wandering.shop
+sharry:
+    postgres_password: ENC[AES256_GCM,data:O4FGzQQLBsxjbaZ35fr0hTja,iv:NpZ4yzc1khovBb4EavtD36VDsiVrtLza4lAG/DctQm8=,tag:U1Bc+0hoIpfTbT1yugcqMQ==,type:str]
+    openid_client_id: ENC[AES256_GCM,data:JFhjWCc4FYAYnvVBa1xV7grsKFVjfKrUw3okXHFxIJ9qi63y,iv:lEly6x3fzM74j8mojYaHSV8OmQT5jcpRUjQC6M8GUHs=,tag:xkp7WJvf1AhjM/NnsBolAA==,type:str]
+    openid_client_secret: ENC[AES256_GCM,data:VGi6njCqJUKRdwrc5TKRd3X9p8z26mOyiMCLJ55pMnI=,iv:E27IZvcWltwMBBzyu5NuubLb64FipaP91kwDRBebiH4=,tag:NTkMYAG2tfld/t7rbpyuFQ==,type:str]
 sops:
     age:
         - recipient: age1w0c42y4lgr46r8sq76h32ehk3gkuwp2e2e92894k0c3v9hjuksdsq6sgdx
@@ -11,7 +15,7 @@ sops:
             V0htYU1CUFU0dUV5dTk4dzdmM0s3MVkK6z072NbCgbfFCWyZ+psvzgWtcu4TPNCS
             Nqq3c1q+TYFxOH83wKkg6NKg6udS8PXsP3SOOemt+XgRniZ/WHl80A==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-05-31T18:29:35Z"
-    mac: ENC[AES256_GCM,data:NgoY4lVutaZqKB4FyKDUU1aOe+bquUANtr7lF03SCSeYSFChQX0ArWrl7rrMF5XT48IKOxji59NzslwwBiPv87uisd4et6LKRHX8bRF8yTFE9TlSZACMkzfOrKN9xysErptjFospO7jJiA/+qnAKnV61/cTg2tYcozcY5iBWveU=,iv:lfvQZdFOhQzRNeP6PzAzr3O7+VE8kHogtYrh2l/E4xY=,tag:a54PuYfrBJDS10G0VzfcPQ==,type:str]
+    lastmodified: "2026-05-31T22:24:07Z"
+    mac: ENC[AES256_GCM,data:rYlegnz21EWYjZCIGG5zXd75g9Yx2714AbNxS9/2cYjI+udjuf72ZRhDQKy9l5oPwVTHLmI/i+kX2NDcxR63A10Fai54Qm3to5XEVxf/ZIwxI0IXQYsxe1OZGDQJSGO4+XI9iQ8U/GIeKpjjUEBY5cWDmBwX1T39J26oIAu0tJc=,iv:aPvkIZyIhIpXFdK1uEnuPoBqfFRaCSnCADhncmSfjDE=,tag:rZxxcoWb5vO/jB//LjjoJQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.12.2

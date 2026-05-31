@@ -1,0 +1,43 @@
+sharry.restserver {
+
+  base-url = "https://sharry.camel-tortoise.ts.net"
+
+  bind {
+    address = "0.0.0.0"
+    port = 9090
+  }
+
+  backend {
+    auth {
+      fixed.enabled = false
+
+      oauth = {
+        id = {
+          enabled = true
+          name = "id.offby1.net"
+          icon = "fab fa-openid"
+          authorize-url = "https://id.offby1.net/authorize"
+          token-url = "https://id.offby1.net/api/oidc/token"
+          user-url = "https://id.offby1.net/api/oidc/userinfo"
+          user-id-key = "preferred_username"
+          scope = "profile"
+          client-id = "{{ sharry.openid_client_id }}"
+          client-secret = "{{ sharry.openid_client_secret }}"
+        }
+      }
+    }
+
+    jdbc {
+      url = "jdbc:postgresql://100.103.31.45:5432/sharry"
+      user = "sharry"
+      password = "{{ sharry.postgres_password }}"
+    }
+
+    signup {
+      mode = "invite"
+      invite-time = "14 days"
+      invite-password = "generate-invite"
+    }
+  }
+
+}

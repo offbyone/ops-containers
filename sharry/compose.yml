@@ -1,0 +1,47 @@
+---
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:9090"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:9090"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":true}}
+services:
+  sidecar:
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .simple-sidecar
+    hostname: sharry
+
+  restserver:
+    image: eikek0/sharry:latest
+    container_name: sharry
+    network_mode: service:sidecar
+    command: /opt/sharry.conf
+    volumes:
+      - ./sharry.conf:/opt/sharry.conf
+  db:
+    image: postgres:17.2
+    container_name: postgres_db
+    network_mode: service:sidecar
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=dbuser
+      - POSTGRES_DB=dbname
+      - PGUSER=dbuser
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "dbname"]
+      interval: 15s
+      timeout: 60s
+      retries: 5
+      start_period: 15s
+volumes:
+  postgres_data:
+  tailscale-data:
