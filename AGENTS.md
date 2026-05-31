@@ -75,3 +75,7 @@ Most of these compose definitions are not intended to be invoked on the developm
 ## Version Control Systems
 
 - If a .jj file exists in the repository, it is using jujutsu as a version control system. At the end of a series of operations, describe what you did by running `jj describe -m` to add a new commit message.
+
+## Command wrapping
+
+- This package uses variables from `direnv` so wrap all commands in `direnv exec . <cmd>` or if needed, `direnv exec . bash -c '<cmd>'`

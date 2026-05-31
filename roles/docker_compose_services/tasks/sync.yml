@@ -5,81 +5,55 @@
     state: directory
     mode: "0755"
 
-# NOTE: delete is intentionally NOT enabled here. The remote repo_path holds
-# both synced repo content and runtime state living side by side (rendered
-# *.env files, container-created data dirs, keys, local overrides). rsync
-# --delete would remove that runtime state, and its --delete generator also
-# fails trying to opendir() root-owned data dirs (e.g. tandoor/postgresql) that
-# ansible_user can't read. Removing whole *unmanaged* service dirs is handled
-# deliberately by playbook-cleanup-unmanaged.yml instead.
-- name: Sync compose definitions to remote
-  ansible.posix.synchronize:
-    src: "{{ playbook_dir }}/"
-    dest: "{{ repo_path }}/"
-    recursive: true
-    rsync_path: "{{ sync_rsync_path | default('', true) or omit }}"
-    rsync_opts:
-      - "--itemize-changes"
-      - "--filter=':- .gitignore'"
-      - "--exclude=.git/"
-      - "--exclude=.jj/"
-      - "--exclude=.venv/"
-      - "--exclude=*.template"
-      - "--exclude=sidecar/"
-      - "--exclude=inventory/"
-      - "--exclude=host_vars/"
-      - "--exclude=group_vars/"
-      - "--exclude=roles/"
-      - "--exclude=ansible.cfg"
-      - "--exclude=playbook-*.yml"
-      - "--exclude=secrets.yml"
-      - "--exclude=requirements.in"
-      - "--exclude=requirements.txt"
-      - "--exclude=mise.toml"
-      - "--exclude=justfile"
-      - "--exclude=.pre-commit-config.yaml"
-      - "--exclude=.envrc"
-      - "--exclude=.envrc.local"
-      - "--exclude=.env"
-      - "--exclude=.sops.yaml"
-      - "--exclude=.sops-key"
-      - "--exclude=.vault-password"
-      - "--exclude=.claude/"
-      - "--exclude=.disabled/"
-      - "--exclude=.github/"
-      - "--exclude=AGENTS.md"
-      - "--exclude=docs/"
-  register: sync_result
-  # The itemized rsync output is one cryptic line per path and is extremely
-  # noisy under --diff. Suppress that auto-rendered diff and emit a concise
-  # summary in the next task instead (full list still available with -v).
-  diff: false
-
-# stdout_lines holds the --itemize-changes lines, each "<flags> <path>".
-# A path is newly created when its itemize flags contain "+++" (e.g.
-# "<f+++++++"); anything else is a metadata/content update to an existing path.
-# The "./" root entry is dropped as noise.
-- name: Summarize sync changes
-  vars:
-    _changes: >-
-      {{ sync_result.stdout_lines | default([])
-         | reject('equalto', '')
-         | reject('search', '\s\./$')
+# Honour `-e service=<name>` the same way compose.yml and render_templates.yml
+# do: sync every service, or just the requested one. Scoping the sync to the
+# selected service(s) means a single-service run only copies that service's
+# files instead of the whole tree.
+- name: Build the list of service directories to sync
+  ansible.builtin.set_fact:
+    _sync_dirs: >-
+      {{ (services if not service
+          else services | selectattr('name', 'equalto', service) | list)
+         | map(attribute='name')
          | list }}
-    _new: "{{ _changes | select('search', '\\+\\+\\+') | list }}"
-    _updated: "{{ _changes | reject('search', '\\+\\+\\+') | list }}"
-  block:
-    - name: Show sync summary
-      ansible.builtin.debug:
-        msg: >-
-          Sync to {{ inventory_hostname }}:
-          {{ _changes | length }} path(s) changed
-          ({{ _new | length }} new, {{ _updated | length }} updated).{{
-          ' Run with -v to list them.' if _changes | length > 0 else '' }}
 
-    - name: List changed paths
-      ansible.builtin.debug:
-        msg: >-
-          {{ (_changes | map('regex_replace', '^\S+\s+', '') | list) }}
-        verbosity: 1
-      when: _changes | length > 0
+# git is the source of truth for *which* files to copy. `git ls-files` lists
+# only tracked files, so it inherently honours every .gitignore in the tree
+# (what the old rsync setup needed `--filter=':- .gitignore'` for) and never
+# picks up runtime state (rendered *.env, container data dirs) that lives
+# alongside the repo content on the remote. sidecar-compose.yaml is a repo-root
+# file that service compose files reference via `extends: ../sidecar-compose.yaml`,
+# so it must always be present even on a single-service run.
+- name: Enumerate tracked files for the selected services
+  ansible.builtin.command:
+    argv: "{{ ['git', 'ls-files', '--'] + _sync_dirs + ['sidecar-compose.yaml'] }}"
+    chdir: "{{ playbook_dir }}"
+  delegate_to: localhost
+  changed_when: false
+  check_mode: false
+  register: _tracked_files
+  when: _sync_dirs | length > 0
+
+# *.template files are rendered separately by render_templates.yml; only their
+# rendered output should land on the remote, so drop them here.
+- name: Compute the list of files to copy
+  ansible.builtin.set_fact:
+    _sync_files: >-
+      {{ _tracked_files.stdout_lines
+         | reject('search', '\.template$')
+         | list }}
+  when: _sync_dirs | length > 0
+
+# copy is idempotent via checksum and renders real per-file content under
+# --diff, so there is no need for the rsync itemize-changes summary machinery.
+# It never deletes, which preserves the remote's runtime state (whole-service
+# removal stays the job of playbook-cleanup-unmanaged.yml).
+- name: Copy service files to remote
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/{{ item }}"
+    dest: "{{ repo_path }}/{{ item }}"
+    mode: preserve
+  loop: "{{ _sync_files | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+  when: _sync_dirs | length > 0

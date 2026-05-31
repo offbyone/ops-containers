@@ -3,9 +3,13 @@
   ansible.builtin.set_fact:
     _services: "{{ services if not service else services | selectattr('name', 'equalto', service) | list }}"
 
-- name: Fail if the requested service was not found
-  ansible.builtin.fail:
-    msg: "Service '{{ service }}' not found in services for this host"
+# A requested service simply may not be defined on every host (each host's
+# services list is its own). Treat that as "nothing to do here" rather than a
+# failure, so a single `-e service=foo` run can target the whole inventory
+# without erroring on the hosts that don't host foo. Report it for visibility.
+- name: Report that the requested service is not defined on this host
+  ansible.builtin.debug:
+    msg: "Service '{{ service }}' is not defined on {{ inventory_hostname }}; skipping."
   when: service | length > 0 and _services | length == 0
 
 - name: Verify service definitions exist
