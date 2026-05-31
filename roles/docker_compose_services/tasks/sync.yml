@@ -17,6 +17,7 @@
     src: "{{ playbook_dir }}/"
     dest: "{{ repo_path }}/"
     recursive: true
+    rsync_path: "{{ sync_rsync_path | default('', true) or omit }}"
     rsync_opts:
       - "--itemize-changes"
       - "--filter=':- .gitignore'"

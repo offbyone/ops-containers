@@ -1,4 +1,10 @@
 repo_path: "{{ ansible_user_dir }}/ops-containers"
+
+# blob is a Synology NAS. Its /usr/bin/rsync is a setuid wrapper that refuses
+# to run ("rsync service is no running") unless the DSM rsync service is
+# enabled. Use the plain rsync from the synocli-net SynoCommunity package for
+# the ansible.posix.synchronize step instead.
+sync_rsync_path: /usr/local/bin/rsync
 services:
   - name: archivebox
     compose_file: docker-compose.yml

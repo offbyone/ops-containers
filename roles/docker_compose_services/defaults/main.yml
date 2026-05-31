@@ -2,6 +2,13 @@
 # Path where the repository will be cloned
 repo_path: "/opt/ansible-docker-compose/ops-containers"
 
+# Path to the rsync binary to invoke on the remote host for the sync step.
+# Empty means let rsync use the remote default (PATH lookup). Override per-host
+# where the default rsync is unsuitable -- e.g. Synology's /usr/bin/rsync is a
+# setuid wrapper that aborts with "rsync service is no running" unless the DSM
+# rsync service is enabled; point this at a plain rsync (synocli-net) instead.
+sync_rsync_path: ""
+
 # List of services to deploy (should be overridden in host_vars)
 services: []
 
