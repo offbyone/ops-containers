@@ -6,11 +6,19 @@ ansible_become_pass: "{{ prime_sudo_password }}"
 services:
   - name: audiobookshelf
     compose_file: compose.yml
+  - name: gallery-dl-app
+    compose_file: compose.yaml
   - name: hoarder
     compose_file: compose.yml
   - name: immich
     compose_file: docker-compose.yml
   - name: maybe
     compose_file: compose.yaml
+  - name: paperless
+    compose_file: compose.yaml
+  - name: seerr
+    compose_file: compose.yaml
   - name: tautulli
     compose_file: docker-compose.yml
+  - name: tsdproxy
+    compose_file: compose.yaml

@@ -2,6 +2,8 @@ repo_path: "{{ ansible_user_dir }}/ops-containers"
 services:
   - name: archivebox
     compose_file: docker-compose.yml
+  - name: bichon
+    compose_file: compose.yaml
   - name: prometheus
     compose_file: docker-compose.yml
   - name: victoria-logs

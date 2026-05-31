@@ -1,6 +1,8 @@
 services:
   - name: atuin
     compose_file: docker-compose.yml
+  - name: calibre-web
+    compose_file: compose.yml
   - name: breezewiki
     compose_file: compose.yaml
   - name: changedetection
@@ -15,6 +17,8 @@ services:
     compose_file: docker-compose.yml
   - name: metrics
     compose_file: docker-compose.yml
+  - name: miniflux
+    compose_file: compose.yaml
   - name: openobserve
     compose_file: docker-compose.yml
   - name: radarr
