@@ -1,8 +1,19 @@
 ---
+- name: Select services to act on
+  ansible.builtin.set_fact:
+    _services: "{{ services if not service else services | selectattr('name', 'equalto', service) | list }}"
+
+- name: Fail if the requested service was not found
+  ansible.builtin.fail:
+    msg: "Service '{{ service }}' not found in services for this host"
+  when: service | length > 0 and _services | length == 0
+
 - name: Verify service definitions exist
   ansible.builtin.stat:
     path: "{{ repo_path }}/{{ item.path | default(item.name) }}/{{ item.compose_file | default('compose.yml') }}"
-  loop: "{{ services }}"
+  loop: "{{ _services }}"
+  loop_control:
+    label: "{{ item.name }}"
   register: service_files
 
 - name: Fail if any service definition doesn't exist
@@ -10,15 +21,25 @@
     msg: "Service definition {{ item.item.name }} not found at {{ repo_path }}/{{ item.item.path | default(item.item.name) }}/{{ item.item.compose_file | default('compose.yml') }}"
   when: not item.stat.exists
   loop: "{{ service_files.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
 
-- name: Deploy and ensure services are up
+- name: Deploy services (up unless up=false brings them down)
   community.docker.docker_compose_v2:
-    wait: true
+    # `wait` is skipped under --check: the module's dry-run can't actually
+    # wait for health and reports any currently-exited container as a
+    # failure ("container X exited (0)"), which is a false positive.
+    wait: "{{ not ansible_check_mode }}"
     project_src: "{{ repo_path }}/{{ item.path | default(item.name) }}"
     files:
       - "{{ item.compose_file | default('compose.yml') }}"
-    state: present
+    # `up: false` on a service brings it down; otherwise it is brought up.
+    state: "{{ 'present' if item.up | default(true) else 'absent' }}"
+    # Pull images when `-e pull=true`; otherwise use the compose pull policy.
+    pull: "{{ 'always' if pull | bool else 'policy' }}"
     remove_orphans: true
-  loop: "{{ services }}"
+  loop: "{{ _services }}"
+  loop_control:
+    label: "{{ item.name }} ({{ 'up' if item.up | default(true) else 'down' }})"
   register: compose_result
   become: "{{ become_for_docker }}"

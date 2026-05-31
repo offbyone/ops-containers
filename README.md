@@ -114,3 +114,42 @@ This repository includes:
 - **Justfile** with common tasks for service management
 - **Pre-commit hooks** for code quality
 - **GitHub Actions** for container builds
+
+### Deploying services
+
+Services are deployed per host with `playbook-ops-containers.yml`. The list of
+services for each host lives in `host_vars/<host>.yml`; each entry supports:
+
+- `name` — service directory name (required)
+- `compose_file` — compose filename (default `compose.yml`)
+- `path` — service directory, if different from `name`
+- `up` — set to `false` to bring the service **down** instead of up (default `true`)
+
+```bash
+# Deploy all services for a host
+ansible-playbook playbook-ops-containers.yml --limit blob
+
+# Preview changes without touching the host
+ansible-playbook playbook-ops-containers.yml --limit blob --check
+```
+
+#### Limiting to a single service
+
+Use `-e service=NAME` to act on just one service (the run fails fast if the name
+isn't defined for that host):
+
+```bash
+ansible-playbook playbook-ops-containers.yml --limit blob -e service=minio
+```
+
+#### Pulling images
+
+Image pulls use each compose file's own policy by default. Pass `-e pull=true`
+to pull images before bringing services up:
+
+```bash
+ansible-playbook playbook-ops-containers.yml --limit blob -e pull=true
+
+# combine with a single service
+ansible-playbook playbook-ops-containers.yml --limit blob -e service=prometheus -e pull=true
+```

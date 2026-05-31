@@ -17,6 +17,14 @@ github_pat_vault_var: "github_pat"
 # List of services to deploy (should be overridden in host_vars)
 services: []
 
+# Limit the run to a single service by name (override on the CLI:
+# `-e service=minio`). Empty means act on all services.
+service: ""
+
+# Pull images before bringing services up (override on the CLI: `-e pull=true`).
+# When false the compose file's own pull policy is used.
+pull: false
+
 # Default health check timeout (in seconds)
 health_check_timeout: 300
 
