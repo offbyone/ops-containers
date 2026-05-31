@@ -1,0 +1,17 @@
+shop_prometheus:
+    tailnet_config_unencrypted: CHANGEME
+sops:
+    age:
+        - recipient: age1w0c42y4lgr46r8sq76h32ehk3gkuwp2e2e92894k0c3v9hjuksdsq6sgdx
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWdjlrN0svNHU3RkpOajh6
+            NWN0S1dVaWFydEpNZ0VrelQ3bUNYb0R3bHpNCmJrdHVHc2tIb3lJdngwUTdlbW15
+            VmJNdFRNVzhMUzFKay9La3Uydi9MQ0kKLS0tIG8vUEV6c1lYU2ZvMjNPRGsrbWd4
+            V0htYU1CUFU0dUV5dTk4dzdmM0s3MVkK6z072NbCgbfFCWyZ+psvzgWtcu4TPNCS
+            Nqq3c1q+TYFxOH83wKkg6NKg6udS8PXsP3SOOemt+XgRniZ/WHl80A==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-05-31T18:29:35Z"
+    mac: ENC[AES256_GCM,data:NgoY4lVutaZqKB4FyKDUU1aOe+bquUANtr7lF03SCSeYSFChQX0ArWrl7rrMF5XT48IKOxji59NzslwwBiPv87uisd4et6LKRHX8bRF8yTFE9TlSZACMkzfOrKN9xysErptjFospO7jJiA/+qnAKnV61/cTg2tYcozcY5iBWveU=,iv:lfvQZdFOhQzRNeP6PzAzr3O7+VE8kHogtYrh2l/E4xY=,tag:a54PuYfrBJDS10G0VzfcPQ==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.12.2
