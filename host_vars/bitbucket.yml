@@ -17,6 +17,21 @@ services:
     compose_file: docker-compose.yml
   - name: metrics
     compose_file: docker-compose.yml
+  - name: metrics-blackbox-exporter
+    path: metrics/blackbox-exporter
+    compose_file: docker-compose.yml
+  - name: metrics-plex-exporter
+    path: metrics/plex-exporter
+    compose_file: docker-compose.yml
+  - name: metrics-snmp-exporter
+    path: metrics/snmp-exporter
+    compose_file: docker-compose.yml
+  - name: metrics-synology-monitor
+    path: metrics/synology-monitor
+    compose_file: docker-compose.yml
+  - name: metrics-udm-poller
+    path: metrics/udm-poller
+    compose_file: docker-compose.yml
   - name: miniflux
     compose_file: compose.yaml
   - name: openobserve

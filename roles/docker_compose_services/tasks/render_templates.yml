@@ -11,12 +11,14 @@
 # the host's services.
 - name: Build local service directory paths
   ansible.builtin.set_fact:
-    _template_search_dirs: >-
-      {{ (services if not service
-          else services | selectattr('name', 'equalto', service) | list)
-         | map(attribute='name')
-         | map('regex_replace', '^', playbook_dir ~ '/')
-         | list }}
+    # Honour `-e service=<name>` the same way compose.yml does, then use
+    # `path | default(name)` (consistent with compose.yml) so nested
+    # sub-services such as metrics/udm-poller resolve to a real directory
+    # rather than a non-existent `playbook_dir/<name>`.
+    _template_search_dirs: "{{ _template_search_dirs | default([]) + [playbook_dir ~ '/' ~ (item.path | default(item.name))] }}"
+  loop: "{{ services if not service else services | selectattr('name', 'equalto', service) | list }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Find template files for managed services
   ansible.builtin.find:
@@ -32,12 +34,15 @@
 
 - name: Render templates to remote service directories
   ansible.builtin.template:
-    src: "{{ item.path }}"
-    dest: "{{ repo_path }}/{{ item.path | relpath(playbook_dir) | regex_replace('\\.template$', '') }}"
+    src: "{{ item }}"
+    dest: "{{ repo_path }}/{{ item | relpath(playbook_dir) | regex_replace('\\.template$', '') }}"
     # No mode set on purpose: leave the mode untouched on files that already
     # exist on the host (preserving e.g. 0664), and fall back to the remote
     # umask for brand-new renders.
-  loop: "{{ found_templates.files }}"
+  # Dedupe by path: a parent service's recursive search (e.g. metrics) and an
+  # explicitly listed sub-service (e.g. metrics/udm-poller) both match the same
+  # nested template, so render each source exactly once.
+  loop: "{{ found_templates.files | map(attribute='path') | unique | list }}"
   loop_control:
-    label: "{{ item.path | relpath(playbook_dir) | regex_replace('\\.template$', '') }}"
+    label: "{{ item | relpath(playbook_dir) | regex_replace('\\.template$', '') }}"
   become: "{{ become_for_docker }}"
