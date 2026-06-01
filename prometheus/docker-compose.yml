@@ -17,6 +17,8 @@ services:
       file: ../sidecar-compose.yaml
       service: .simple-sidecar
     hostname: prometheus
+    environment:
+      - TS_ACCEPT_DNS=true
     volumes:
       - prometheus-tailscale-data:/var/lib/tailscale
 
