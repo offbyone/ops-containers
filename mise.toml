@@ -1,3 +1,2 @@
 [tools]
 sops = "latest"
-ansible = { version = "13", pipx_args = "--include-deps", uvx = "true" }
