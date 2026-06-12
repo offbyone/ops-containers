@@ -6,9 +6,10 @@
 #
 # Templates themselves are excluded from the sync step, so only the rendered
 # output ever lands on the remote.
-# Honour `-e service=<name>`: render only that service's templates, matching
-# the same filter compose.yml applies. When `service` is unset, render all of
-# the host's services.
+# `_candidates` (resolved in setup.yml) already honours `-e service=<name>`:
+# render only that service's templates, or all of the host's services when
+# `service` is unset. Both systemd- and compose-managed services may have
+# templates, so this uses the full candidate list.
 - name: Initialise the template search dir list
   ansible.builtin.set_fact:
     # Seed to an empty list so the var is ALWAYS defined, even when the loop
@@ -20,12 +21,11 @@
 
 - name: Build local service directory paths
   ansible.builtin.set_fact:
-    # Honour `-e service=<name>` the same way compose.yml does, then use
-    # `path | default(name)` (consistent with compose.yml) so nested
+    # Use `path | default(name)` (consistent with compose.yml) so nested
     # sub-services such as metrics/udm-poller resolve to a real directory
     # rather than a non-existent `playbook_dir/<name>`.
     _template_search_dirs: "{{ _template_search_dirs + [playbook_dir ~ '/' ~ (item.path | default(item.name))] }}"
-  loop: "{{ services if not service else services | selectattr('name', 'equalto', service) | list }}"
+  loop: "{{ _candidates }}"
   loop_control:
     label: "{{ item.name }}"
 

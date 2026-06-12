@@ -1,4 +1,9 @@
 ---
+- name: Resolve the service lists for this host
+  ansible.builtin.import_tasks: setup.yml
+  tags:
+    - always
+
 - name: Sync compose definitions to remote
   ansible.builtin.import_tasks: sync.yml
   tags:

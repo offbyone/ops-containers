@@ -1,21 +1,11 @@
 ---
 # Manage services flagged `systemd: true` in host_vars with a per-service systemd
 # unit instead of the docker_compose_v2 module path (tasks/compose.yml). The two
-# paths are mutually exclusive: compose.yml rejects `systemd: true` services, and
-# this file only ever touches them.
-#
-# Honour `-e service=<name>` the same way compose.yml does, then keep only the
-# systemd-managed entries. A requested service simply may not be systemd-managed
-# (or defined) on this host; an empty list lets the include below iterate zero
-# times and the play moves on.
-- name: Select systemd-managed services to act on
-  ansible.builtin.set_fact:
-    _systemd_services: >-
-      {{ (services if not service
-          else services | selectattr('name', 'equalto', service) | list)
-         | rejectattr('systemd', 'undefined')
-         | selectattr('systemd')
-         | list }}
+# paths are mutually exclusive: compose.yml acts on `_compose_services` and this
+# file only ever touches `_systemd_services`. Both lists are resolved once in
+# setup.yml (already narrowed by `-e service=<name>`); a requested service may
+# not be systemd-managed (or defined) on this host, in which case the list is
+# empty and the include below iterates zero times.
 
 # `--abort-on-container-failure` (only abort on a *non-zero* exit) was added in
 # Docker Compose v2.30.0; older releases only have `--abort-on-container-exit`

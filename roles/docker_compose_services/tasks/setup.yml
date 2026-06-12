@@ -1,0 +1,41 @@
+---
+# Resolve, once per run, the service lists every other task file in this role
+# consumes. Centralising the `-e service=<name>` narrowing and the
+# systemd/compose split keeps the (subtle) filter logic in one place instead of
+# being repeated — and drifting — across compose.yml, systemd.yml, sync.yml and
+# render_templates.yml.
+#
+# Imported from main.yml with the `always` tag so these facts exist regardless
+# of which tag (sync/templates/deploy) a run selects. The tasks are pure
+# set_fact with no remote calls, so running them on every invocation is cheap.
+
+# `-e service=<name>` narrows to the single requested entry; with no `service`
+# set, every entry defined for this host is a candidate. A requested service may
+# simply not be defined on this host, in which case this is an empty list and
+# the guarded tasks downstream skip cleanly rather than failing.
+- name: Build the candidate service list
+  ansible.builtin.set_fact:
+    _candidates: >-
+      {{ services if not service
+         else services | selectattr('name', 'equalto', service) | list }}
+
+# `systemd: true` entries are supervised by per-service systemd units
+# (systemd.yml); everything else goes through the docker_compose_v2 module path
+# (compose.yml). `selectattr('systemd')` alone errors on entries with no
+# `systemd` key, so drop undefined-key entries first, then keep the truthy ones.
+- name: Select the systemd-managed services
+  ansible.builtin.set_fact:
+    _systemd_services: >-
+      {{ _candidates
+         | rejectattr('systemd', 'undefined')
+         | selectattr('systemd')
+         | list }}
+
+# The compose-managed services are the remaining candidates. Rejecting by name
+# (rather than a set difference) preserves the order they were declared in.
+- name: Select the compose-managed services
+  ansible.builtin.set_fact:
+    _compose_services: >-
+      {{ _candidates
+         | rejectattr('name', 'in', _systemd_services | map(attribute='name') | list)
+         | list }}

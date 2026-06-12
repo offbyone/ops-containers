@@ -1,13 +1,7 @@
 ---
-- name: Select services to act on
-  ansible.builtin.set_fact:
-    # Exclude services flagged `systemd: true`; those are handled by systemd.yml.
-    # rejectattr('systemd') keeps entries where the key is absent or false.
-    _services: >-
-      {{ (services if not service
-          else services | selectattr('name', 'equalto', service) | list)
-         | rejectattr('systemd') | list }}
-
+# `_compose_services` (the compose-managed services for this host, already
+# narrowed by `-e service=<name>`) is resolved once in setup.yml.
+#
 # A requested service simply may not be defined on every host (each host's
 # services list is its own). Treat that as "nothing to do here" rather than a
 # failure, so a single `-e service=foo` run can target the whole inventory
@@ -15,12 +9,12 @@
 - name: Report that the requested service is not defined on this host
   ansible.builtin.debug:
     msg: "Service '{{ service }}' is not defined on {{ inventory_hostname }}; skipping."
-  when: service | length > 0 and _services | length == 0
+  when: service | length > 0 and _compose_services | length == 0
 
 - name: Verify service definitions exist
   ansible.builtin.stat:
     path: "{{ repo_path }}/{{ item.path | default(item.name) }}/{{ item.compose_file | default('compose.yml') }}"
-  loop: "{{ _services }}"
+  loop: "{{ _compose_services }}"
   loop_control:
     label: "{{ item.name }}"
   register: service_files
@@ -38,7 +32,7 @@
     project_src: "{{ repo_path }}/{{ item.path | default(item.name) }}"
     files:
       - "{{ item.compose_file | default('compose.yml') }}"
-  loop: "{{ _services }}"
+  loop: "{{ _compose_services }}"
   loop_control:
     label: "{{ item.name }}"
   become: "{{ become_for_docker }}"
@@ -65,7 +59,7 @@
     # above (which also works under --check), so use the compose pull policy.
     pull: policy
     remove_orphans: true
-  loop: "{{ _services }}"
+  loop: "{{ _compose_services }}"
   loop_control:
     label: "{{ item.name }} ({{ 'up' if item.up | default(true) else 'down' }})"
   register: compose_result

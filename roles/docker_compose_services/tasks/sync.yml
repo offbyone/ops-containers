@@ -5,15 +5,16 @@
     state: directory
     mode: "0755"
 
-# Honour `-e service=<name>` the same way compose.yml and render_templates.yml
-# do: sync every service, or just the requested one. Scoping the sync to the
+# Sync the files for every candidate service (`_candidates`, resolved in
+# setup.yml, already honours `-e service=<name>`). Scoping the sync to the
 # selected service(s) means a single-service run only copies that service's
-# files instead of the whole tree.
+# files instead of the whole tree. Both systemd- and compose-managed services
+# need their files on the remote, so this uses the full candidate list rather
+# than either split.
 - name: Build the list of service directories to sync
   ansible.builtin.set_fact:
     _sync_dirs: >-
-      {{ (services if not service
-          else services | selectattr('name', 'equalto', service) | list)
+      {{ _candidates
          | map(attribute='name')
          | list }}
 
