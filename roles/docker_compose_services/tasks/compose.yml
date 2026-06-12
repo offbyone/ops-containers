@@ -1,7 +1,12 @@
 ---
 - name: Select services to act on
   ansible.builtin.set_fact:
-    _services: "{{ services if not service else services | selectattr('name', 'equalto', service) | list }}"
+    # Exclude services flagged `systemd: true`; those are handled by systemd.yml.
+    # rejectattr('systemd') keeps entries where the key is absent or false.
+    _services: >-
+      {{ (services if not service
+          else services | selectattr('name', 'equalto', service) | list)
+         | rejectattr('systemd') | list }}
 
 # A requested service simply may not be defined on every host (each host's
 # services list is its own). Treat that as "nothing to do here" rather than a

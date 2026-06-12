@@ -58,3 +58,6 @@
   loop_control:
     label: "{{ item | relpath(playbook_dir) | regex_replace('\\.template$', '') }}"
   become: "{{ become_for_docker }}"
+  # Registered so systemd_service.yml can restart a service whose rendered .env
+  # (or other rendered file) changed this run; `dest` is the on-remote path.
+  register: _rendered_templates

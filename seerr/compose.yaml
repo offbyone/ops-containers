@@ -13,7 +13,7 @@ configs:
 
 services:
   sidecar:
-    restart: unless-stopped
+    restart: "no"
     extends:
       file: ../sidecar-compose.yaml
       service: .simple-sidecar
@@ -37,7 +37,7 @@ services:
       timeout: 3s
       interval: 15s
       retries: 3
-    restart: unless-stopped
+    restart: "no"
 
 volumes:
   tailscale-data:

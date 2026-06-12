@@ -1,0 +1,46 @@
+---
+# Manage services flagged `systemd: true` in host_vars with a per-service systemd
+# unit instead of the docker_compose_v2 module path (tasks/compose.yml). The two
+# paths are mutually exclusive: compose.yml rejects `systemd: true` services, and
+# this file only ever touches them.
+#
+# Honour `-e service=<name>` the same way compose.yml does, then keep only the
+# systemd-managed entries. A requested service simply may not be systemd-managed
+# (or defined) on this host; an empty list lets the include below iterate zero
+# times and the play moves on.
+- name: Select systemd-managed services to act on
+  ansible.builtin.set_fact:
+    _systemd_services: >-
+      {{ (services if not service
+          else services | selectattr('name', 'equalto', service) | list)
+         | rejectattr('systemd', 'undefined')
+         | selectattr('systemd')
+         | list }}
+
+# `--abort-on-container-failure` (only abort on a *non-zero* exit) was added in
+# Docker Compose v2.30.0; older releases only have `--abort-on-container-exit`
+# (abort on *any* exit). Detect the remote's version and prefer the more precise
+# flag where available, otherwise fall back to the widely-supported one.
+- name: Detect remote docker compose version
+  ansible.builtin.command: docker compose version --short
+  register: _compose_version
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  become: "{{ become_for_docker }}"
+  when: _systemd_services | length > 0
+
+- name: Select the container-abort flag for the systemd units
+  ansible.builtin.set_fact:
+    _compose_abort_flag: >-
+      {{ '--abort-on-container-failure'
+         if ((_compose_version.stdout | default('') | trim | regex_replace('^v', '')) or '0') is version('2.30.0', '>=')
+         else '--abort-on-container-exit' }}
+  when: _systemd_services | length > 0
+
+- name: Manage each systemd-managed compose service
+  ansible.builtin.include_tasks: systemd_service.yml
+  loop: "{{ _systemd_services }}"
+  loop_control:
+    loop_var: svc
+    label: "{{ svc.name }} ({{ 'up' if svc.up | default(true) else 'down' }})"

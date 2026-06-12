@@ -16,3 +16,9 @@
   tags:
     - deploy
     - services
+
+- name: Manage systemd-supervised compose services
+  ansible.builtin.import_tasks: systemd.yml
+  tags:
+    - deploy
+    - services

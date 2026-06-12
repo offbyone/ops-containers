@@ -1,0 +1,129 @@
+---
+# Per-service systemd management. `svc` is one entry from the host's `services`
+# list that has `systemd: true`. Sequential, per-service logic lives here (rather
+# than parallel looped tasks) so each service's cutover reads top-to-bottom.
+
+- name: "Derive service facts for {{ svc.name }}"
+  ansible.builtin.set_fact:
+    _svc_dir: "{{ repo_path }}/{{ svc.path | default(svc.name) }}"
+    _svc_compose: "{{ svc.compose_file | default('compose.yml') }}"
+    _svc_up: "{{ svc.up | default(true) | bool }}"
+
+# Did this run change any of the service's own files? sync.yml registers the
+# per-file copy results and render_templates.yml the rendered .env results; a
+# change to either (or to the unit file below) means the running stack is stale
+# and must be restarted to re-converge, matching the module path's behaviour.
+- name: "Detect changed synced/rendered files for {{ svc.name }}"
+  ansible.builtin.set_fact:
+    _svc_content_changed: >-
+      {{ (_sync_copy.results | default([])
+            | selectattr('changed', 'defined') | selectattr('changed')
+            | map(attribute='item')
+            | select('match', '^' ~ svc.name ~ '/') | list | length > 0)
+         or
+         (_rendered_templates.results | default([])
+            | selectattr('changed', 'defined') | selectattr('changed')
+            | map(attribute='dest')
+            | select('search', '/' ~ svc.name ~ '/') | list | length > 0) }}
+
+- name: "Install systemd unit for {{ svc.name }}"
+  ansible.builtin.template:
+    src: compose-service.service.j2
+    dest: "/etc/systemd/system/{{ svc.name }}.service"
+    mode: "0644"
+  become: true
+  register: _unit_file
+
+- name: "Reload systemd after unit change for {{ svc.name }}"
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  become: true
+  when: _unit_file is changed
+
+# Read current enablement to distinguish "never migrated" (disabled / not found)
+# from "already migrated" (enabled, possibly inactive/crash-looping). is-enabled
+# is read-only, so run it even under --check to branch correctly.
+- name: "Check systemd enablement for {{ svc.name }}"
+  ansible.builtin.command: "systemctl is-enabled {{ svc.name }}.service"
+  register: _svc_enabled
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  become: true
+
+- name: "Pull image(s) for {{ svc.name }}"
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ _svc_dir }}"
+    files:
+      - "{{ _svc_compose }}"
+  become: "{{ become_for_docker }}"
+  when:
+    - _svc_up
+    - pull | bool or pull_only | bool
+  check_mode: false
+
+# First migration only: the stack is still owned by the docker_compose_v2 module
+# (and the Docker daemon via restart: unless-stopped). Bring it down so systemd
+# becomes the sole supervisor. Containers only -- never `-v` -- so named volumes
+# and bind mounts are preserved. `systemctl enable --now` then re-ups under the
+# unit, adopting the same dir-derived project / network / volumes.
+- name: "Bring down module-managed stack before first cutover for {{ svc.name }}"
+  community.docker.docker_compose_v2:
+    project_src: "{{ _svc_dir }}"
+    files:
+      - "{{ _svc_compose }}"
+    state: absent
+  become: "{{ become_for_docker }}"
+  when:
+    - not pull_only | bool
+    - _svc_up
+    - _svc_enabled.stdout != 'enabled'
+
+- name: "Enable and start under systemd for {{ svc.name }}"
+  ansible.builtin.systemd_service:
+    name: "{{ svc.name }}.service"
+    enabled: true
+    state: started
+  become: true
+  when:
+    - not pull_only | bool
+    - _svc_up
+
+# Already-migrated services: `state: started` above is a no-op, so restart
+# explicitly when something changed (unit file, synced compose/.env, or a freshly
+# pulled image). The first-cutover branch already started from current content,
+# so skip the restart there.
+- name: "Restart to apply changes for {{ svc.name }}"
+  ansible.builtin.systemd_service:
+    name: "{{ svc.name }}.service"
+    state: restarted
+  become: true
+  when:
+    - not pull_only | bool
+    - _svc_up
+    - _svc_enabled.stdout == 'enabled'
+    - _unit_file is changed or _svc_content_changed | bool or pull | bool
+
+# up: false -> tear the service down: stop+disable the unit, then ensure the
+# stack is fully down via the module (idempotent; the unit's ExecStop already
+# ran `down` on stop).
+- name: "Disable and stop systemd unit (up=false) for {{ svc.name }}"
+  ansible.builtin.systemd_service:
+    name: "{{ svc.name }}.service"
+    enabled: false
+    state: stopped
+  become: true
+  when:
+    - not pull_only | bool
+    - not _svc_up
+
+- name: "Bring stack down (up=false) for {{ svc.name }}"
+  community.docker.docker_compose_v2:
+    project_src: "{{ _svc_dir }}"
+    files:
+      - "{{ _svc_compose }}"
+    state: absent
+  become: "{{ become_for_docker }}"
+  when:
+    - not pull_only | bool
+    - not _svc_up

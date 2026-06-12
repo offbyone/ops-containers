@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+# Managed by the docker_compose_services role. Do not edit by hand.
+[Unit]
+Description={{ svc.name }} (docker compose)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+WorkingDirectory={{ repo_path }}/{{ svc.path | default(svc.name) }}
+ExecStart=/usr/bin/docker compose -f {{ svc.compose_file | default('compose.yml') }} up {{ _compose_abort_flag | default('--abort-on-container-exit') }}
+ExecStop=/usr/bin/docker compose -f {{ svc.compose_file | default('compose.yml') }} down
+Restart=always
+RestartSec=10
+TimeoutStopSec=120
+
+[Install]
+WantedBy=multi-user.target

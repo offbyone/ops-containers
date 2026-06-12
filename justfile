@@ -47,6 +47,12 @@ bitbucket-down: \
      (svc-down "radarr") \
      (svc-down "sickchill")
 
+# Assert all systemd-managed services are in their expected state.
+# Optionally scope to one service: `just assert-systemd seerr`.
+assert-systemd service="":
+    direnv exec . ansible-playbook playbook-assert-systemd.yml \
+        {{ if service == "" { "" } else { "-e service=" + service } }}
+
 svc-up name:
     cd {{ name }} && docker compose up --wait
 

@@ -10,6 +10,15 @@ repo_path: "/opt/ansible-docker-compose/ops-containers"
 sync_rsync_path: ""
 
 # List of services to deploy (should be overridden in host_vars)
+#
+# Each entry supports:
+#   name:          service directory name (required)
+#   compose_file:  compose filename within the dir (default: compose.yml)
+#   path:          dir override if it differs from name (default: name)
+#   up:            false brings the service down instead of up (default: true)
+#   systemd:       true supervises the service with a per-service systemd unit
+#                  (tasks/systemd.yml) instead of the docker_compose_v2 module.
+#                  Requires a real systemd host; leave unset on e.g. Synology.
 services: []
 
 # Limit the run to a single service by name (override on the CLI:

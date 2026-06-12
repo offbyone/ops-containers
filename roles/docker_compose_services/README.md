@@ -46,6 +46,31 @@ services:
       PGID: "1000"
 ```
 
+### systemd-supervised services
+
+Add `systemd: true` to a service entry to supervise it with a per-service systemd
+unit (`/etc/systemd/system/<name>.service`, `Type=exec` running
+`docker compose up` with a container-abort flag) instead of the
+`docker_compose_v2` module. The role picks `--abort-on-container-failure` when the
+remote's Docker Compose is >= v2.30.0, falling back to `--abort-on-container-exit`
+on older releases. systemd then owns the lifecycle and restarts; the unit
+streams container logs to the journal (`journalctl -u <name>`).
+
+```yaml
+services:
+  - name: seerr
+    compose_file: compose.yaml
+    systemd: true
+```
+
+Migration is flag-driven and idempotent: set `restart: "no"` on the service's
+compose services (so only systemd supervises), add `systemd: true`, and run the
+playbook. On first cutover the role brings the module-managed stack down
+(containers only -- volumes and bind mounts are preserved) and re-ups it under the
+unit. Re-runs converge to a no-op; a changed unit/compose/`.env` or a freshly
+pulled image triggers a restart. Requires a real systemd host (not, e.g., the
+Synology NAS).
+
 ## Example Playbook
 
 ```yaml

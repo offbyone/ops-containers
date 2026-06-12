@@ -56,4 +56,8 @@
   loop: "{{ _sync_files | default([]) }}"
   loop_control:
     label: "{{ item }}"
+  # Registered so systemd_service.yml can tell which services' files changed this
+  # run and restart only those (the `item` is the repo-relative path, e.g.
+  # `seerr/compose.yaml`).
+  register: _sync_copy
   when: _sync_dirs | length > 0

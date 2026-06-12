@@ -1,0 +1,90 @@
+---
+# playbook-assert-systemd.yml
+#
+# Assert that every systemd-managed compose service (services flagged
+# `systemd: true` in host_vars) is in its expected state: services that should be
+# up are `active`, and services pinned `up: false` are not.
+#
+# This is a read-only check -- it never starts, stops, or changes anything.
+#
+# Usage:
+#   ansible-playbook playbook-assert-systemd.yml
+#   ansible-playbook playbook-assert-systemd.yml -e service=seerr   # one service
+#   ansible-playbook playbook-assert-systemd.yml --limit prime
+#
+- name: Assert systemd-managed compose services are in their expected state
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - secrets.yml
+  vars:
+    # Limit to a single service by name (mirrors the role's `-e service=`).
+    service: ""
+  tasks:
+    - name: Select systemd-managed services to check
+      ansible.builtin.set_fact:
+        _systemd_services: >-
+          {{ (services | default([]) if not service
+              else services | default([]) | selectattr('name', 'equalto', service) | list)
+             | rejectattr('systemd', 'undefined')
+             | selectattr('systemd')
+             | list }}
+
+    - name: Report when this host has no systemd-managed services
+      ansible.builtin.debug:
+        msg: "No systemd-managed services to check on {{ inventory_hostname }}."
+      when: _systemd_services | length == 0
+
+    - name: Query each unit's active state
+      ansible.builtin.command: "systemctl is-active {{ item.name }}.service"
+      register: _active
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      become: true
+      loop: "{{ _systemd_services }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: _systemd_services | length > 0
+
+    - name: Show each service's state
+      ansible.builtin.debug:
+        msg: >-
+          {{ item.item.name }}: is-active={{ item.stdout }}
+          (expected {{ (item.item.up | default(true)) | ternary('active', 'inactive') }})
+      loop: "{{ _active.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+
+    - name: Identify services that should be up but are not active
+      ansible.builtin.set_fact:
+        _bad_up: >-
+          {{ (_active.results | default([])
+              | rejectattr('item.up', 'defined') | list
+              + _active.results | default([])
+              | selectattr('item.up', 'defined') | selectattr('item.up') | list)
+             | rejectattr('stdout', 'equalto', 'active')
+             | map(attribute='item.name') | list }}
+
+    - name: Identify services pinned up=false that are unexpectedly active
+      ansible.builtin.set_fact:
+        _bad_down: >-
+          {{ _active.results | default([])
+             | selectattr('item.up', 'defined') | rejectattr('item.up')
+             | selectattr('stdout', 'equalto', 'active')
+             | map(attribute='item.name') | list }}
+
+    - name: Assert all systemd-managed services are in their expected state
+      ansible.builtin.assert:
+        that:
+          - _bad_up | length == 0
+          - _bad_down | length == 0
+        fail_msg: >-
+          {{ inventory_hostname }}: unexpected systemd service state --
+          {{ ('not active: ' ~ (_bad_up | join(', '))) if _bad_up | length else '' }}
+          {{ ('unexpectedly active (up=false): ' ~ (_bad_down | join(', '))) if _bad_down | length else '' }}
+        success_msg: >-
+          {{ inventory_hostname }}: all {{ _systemd_services | length }} systemd-managed
+          service(s) in expected state.
+        quiet: true
+      when: _systemd_services | length > 0
