@@ -1,18 +1,30 @@
+# sudo on bitbucket authenticates via pam_ssh_agent_auth against the forwarded
+# SSH agent (no password). Ansible's ControlMaster/pipelining connection does not
+# reliably carry the agent into the multiplexed `sudo` session, so forward it
+# explicitly here -- required for `become: true` (e.g. installing systemd units).
+ansible_ssh_common_args: "-o ForwardAgent=yes"
+
 services:
   - name: atuin
     compose_file: docker-compose.yml
+    systemd: true
   - name: calibre-web
     compose_file: compose.yml
   - name: breezewiki
     compose_file: compose.yaml
+    systemd: true
   - name: changedetection
     compose_file: docker-compose.yml
+    systemd: true
   - name: cobalt
     compose_file: docker-compose.yml
+    systemd: true
   - name: flaresolverr
     compose_file: compose.yaml
+    systemd: true
   - name: jackett
     compose_file: docker-compose.yml
+    systemd: true
   - name: lidarr
     compose_file: docker-compose.yml
   - name: metrics
@@ -38,12 +50,14 @@ services:
     compose_file: docker-compose.yml
   - name: radarr
     compose_file: docker-compose.yml
+    systemd: true
   # - name: radicale
   #   compose_file: compose.yml
   - name: readarr
     compose_file: docker-compose.yml
   - name: sonarr
     compose_file: compose.yml
+    systemd: true
   - name: tandoor
     compose_file: compose.yml
   # - name: whisparr
