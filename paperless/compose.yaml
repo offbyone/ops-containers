@@ -101,6 +101,7 @@ services:
     network_mode: service:sidecar
 
   sidecar:
+    restart: unless-stopped
     extends:
       file: ../sidecar-compose.yaml
       service: .simple-sidecar

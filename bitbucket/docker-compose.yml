@@ -20,6 +20,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     network_mode: "service:sidecar"
   sidecar:
+    restart: unless-stopped
     extends:
       file: ../sidecar-compose.yaml
       service: .simple-sidecar

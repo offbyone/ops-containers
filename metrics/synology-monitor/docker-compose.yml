@@ -1,6 +1,7 @@
 ---
 services:
   sidecar-blob:
+    restart: always
     extends:
       file: ../../sidecar-compose.yaml
       service: .sidecar
@@ -20,6 +21,7 @@ services:
     image: f100024/syncthing_exporter:latest
 
   sidecar-whatbox:
+    restart: always
     extends:
       file: ../../sidecar-compose.yaml
       service: .sidecar

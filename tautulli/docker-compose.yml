@@ -25,6 +25,7 @@ services:
       - TZ=America/Los_Angeles
 
   sidecar:
+    restart: unless-stopped
     extends:
       file: ../sidecar-compose.yaml
       service: .simple-sidecar

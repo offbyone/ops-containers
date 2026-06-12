@@ -3,6 +3,7 @@ name: readeck
 
 services:
   sidecar:
+    restart: always
     extends:
       file: ../sidecar-compose.yaml
       service: .sidecar

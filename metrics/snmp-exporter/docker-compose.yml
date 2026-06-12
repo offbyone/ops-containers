@@ -13,6 +13,7 @@ configs:
 
 services:
   sidecar:
+    restart: unless-stopped
     extends:
       file: ../../sidecar-compose.yaml
       service: .simple-sidecar

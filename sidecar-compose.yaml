@@ -1,7 +1,6 @@
 ---
 services:
   .sidecar:
-    restart: always
     image: ghcr.io/offbyone/sidecar:main
     volumes:
       - tailscale-data:/var/lib/tailscale
@@ -37,7 +36,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    restart: unless-stopped
 
   .sidecar-noserve:
     image: tailscale/tailscale:latest
@@ -59,4 +57,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    restart: unless-stopped

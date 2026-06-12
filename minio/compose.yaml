@@ -3,6 +3,7 @@ services:
     image: alpine
     command: sleep infinity
   sidecar:
+    restart: always
     extends:
       file: ../sidecar-compose.yaml
       service: .sidecar
