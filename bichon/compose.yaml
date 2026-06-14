@@ -22,7 +22,7 @@ services:
     hostname: bichon
 
   bichon:
-    image: rustmailer/bichon:latest
+    image: rustmailer/bichon:1.5.2
     restart: always
     network_mode: service:sidecar
     container_name: bichon
