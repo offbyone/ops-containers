@@ -110,6 +110,12 @@ scrape_configs:
       - target_label: __address__
         replacement: shop-probe.tail9a8e5.ts.net:9115 # shop-probe
 
+  - job_name: elasticsearch
+    static_configs:
+      - targets: ["search-hil-1.tail9a8e5.ts.net:9114"]
+        labels:
+          instance: search-hil-1
+
   - job_name: "sidekiq"
     static_configs:
       - targets:
