@@ -8,7 +8,7 @@
 # without erroring on the hosts that don't host foo. Report it for visibility.
 - name: Report that the requested service is not defined on this host
   ansible.builtin.debug:
-    msg: "Service '{{ service }}' is not defined on {{ inventory_hostname }}; skipping."
+    msg: "Service '{{ service }}' is not defined on {{ inventory_hostname }} with docker compose; skipping."
   when: service | length > 0 and _compose_services | length == 0
 
 - name: Verify service definitions exist
@@ -32,7 +32,7 @@
     project_src: "{{ repo_path }}/{{ item.path | default(item.name) }}"
     files:
       - "{{ item.compose_file | default('compose.yml') }}"
-  loop: "{{ _compose_services }}"
+  loop: "{{ _compose_services + _systemd_services }}"
   loop_control:
     label: "{{ item.name }}"
   become: "{{ become_for_docker }}"
