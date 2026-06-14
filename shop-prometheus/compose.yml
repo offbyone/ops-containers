@@ -21,6 +21,8 @@ services:
       - 8.8.8.8
       - 8.8.4.4
     hostname: prometheus
+    environment:
+      - TS_ACCEPT_DNS=true
     volumes:
       - prometheus-tailscale-data:/var/lib/tailscale
 
