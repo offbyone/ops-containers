@@ -2,7 +2,7 @@ github_pat: ENC[AES256_GCM,data:7bOr1jfjmn8SAsV6MvSqedWQ5WYX9uXfgtc6wVkF35BF2Je5
 immich:
     upload_location_unencrypted: /mnt/photos/immich
     db_data_location_unencrypted: ./postgres
-    version_unencrypted: release
+    version_unencrypted: v3
     db_username_unencrypted: postgres
     db_database_name_unencrypted: immich
     db_password: ENC[AES256_GCM,data:meimfh1Xy6fRHgI52NzWiUQF,iv:hBRwDxwywoT1HWx9iyQEj8miHnGQn1qWEIJh7aK12zU=,tag:oR5PHO8zRX8wbqKethS/TA==,type:str]
@@ -21,7 +21,7 @@ sops:
             Slh0b09nZERDejkxOTc5OFJta1ErWGsK4h9WR29PLOwZN11VP0yescIa03mtP3aG
             Hw0EfxTbLhXBjVAEXZ8SK+knmDGjXB6+oyLmDPKuMk5UafMwvYbXgQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-05-31T18:18:25Z"
-    mac: ENC[AES256_GCM,data:SLKiUJaKdHjKEECnpG8Mo9pltxQhZRMgA1si6Oo/q19F/KIkGR5PSJ+VfvRB1wv8GGOUowOk/nZ7hm3rmXGlqmGZdhKotv0RyEXU3ZTbnxO5As5dU/QjZxjcvfRxNt2KbUoHvOXX5InDF1ztLMYPMzzaWeJA+nl9ZaB84QeObvY=,iv:vBs8mRWwyQFlSz6izFt55v68fzpbFVS4D+krvL0p/o0=,tag:Lu98g2PNGtzGiX1YgaarwQ==,type:str]
+    lastmodified: "2026-07-03T18:43:28Z"
+    mac: ENC[AES256_GCM,data:dXL6bUoqArMIU/xKL+CFjDZ4h408ULX/j8Fnap3UX19TTw2U5uDjnJ9VOKrcWzOphlboTQke2mwRUn8Kh80Rm3wgw50C+Ia+QT4x9XdV2wY1X5RbuOnMEmf7k0XOP7+q8t6tzZIedUyQimS0WCBvSYP8btF96tFonEFYW+Z5H4U=,iv:rJwqR1O0uOxVSXIpe/TmCn0FBmn7D1Sv60QJ+jbRvwI=,tag:Gz8ZJ7lo33iSy6QbwPa/Qg==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.12.2
