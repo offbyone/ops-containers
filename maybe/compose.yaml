@@ -63,7 +63,7 @@ services:
   #
 
   web:
-    image: ghcr.io/maybe-finance/maybe:latest
+    image: ghcr.io/we-promise/sure:stable
     volumes:
       - app-storage:/rails/storage
     network_mode: service:sidecar
@@ -77,11 +77,13 @@ services:
         condition: service_healthy
 
   worker:
-    image: ghcr.io/maybe-finance/maybe:latest
+    image: ghcr.io/we-promise/sure:stable
     network_mode: service:sidecar
     command: bundle exec sidekiq
     restart: unless-stopped
     depends_on:
+      db:
+        condition: service_healthy
       redis:
         condition: service_healthy
     environment:
@@ -100,6 +102,24 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  backup:
+    profiles:
+      - backup
+    image: prodrigestivill/postgres-backup-local
+    network_mode: service:sidecar
+    restart: unless-stopped
+    volumes:
+      - /opt/sure-data/backups:/backups # Change this path to your desired backup location on the host machine
+    environment:
+      <<: *db_env
+      POSTGRES_HOST: localhost
+      SCHEDULE: "@daily" # Runs once a day at midnight
+      BACKUP_KEEP_DAYS: "7" # Keeps the last 7 days of backups
+      BACKUP_KEEP_WEEKS: "4" # Keeps 4 weekly backups
+      BACKUP_KEEP_MONTHS: "6" # Keeps 6 monthly backups
+    depends_on:
+      - db
 
   redis:
     image: redis:latest
