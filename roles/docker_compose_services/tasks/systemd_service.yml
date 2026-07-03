@@ -13,6 +13,14 @@
 # per-file copy results and render_templates.yml the rendered .env results; a
 # change to either (or to the unit file below) means the running stack is stale
 # and must be restarted to re-converge, matching the module path's behaviour.
+# Both branches match on the loop `item` rather than the result `dest`: under
+# --check a changed template/copy result omits the top-level `dest` key (it is
+# only populated on a real write), so `map(attribute='dest')` would raise
+# "'dict' has no attribute 'dest'". `item` is always present -- the sync copy's
+# `item` is the repo-relative path (e.g. `immich/docker-compose.yml`) and the
+# render's `item` is the source template path (e.g. `.../immich/.env.template`),
+# and both contain `/<svc.name>/` (the sync one after prefixing) so the same
+# name match works for either.
 - name: "Detect changed synced/rendered files for {{ svc.name }}"
   ansible.builtin.set_fact:
     _svc_content_changed: >-
@@ -23,7 +31,7 @@
          or
          (_rendered_templates.results | default([])
             | selectattr('changed', 'defined') | selectattr('changed')
-            | map(attribute='dest')
+            | map(attribute='item')
             | select('search', '/' ~ svc.name ~ '/') | list | length > 0) }}
 
 - name: "Install systemd unit for {{ svc.name }}"
