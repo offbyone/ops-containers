@@ -18,16 +18,51 @@
          | map(attribute='name')
          | list }}
 
-# git is the source of truth for *which* files to copy. `git ls-files` lists
-# only tracked files, so it inherently honours every .gitignore in the tree
-# (what the old rsync setup needed `--filter=':- .gitignore'` for) and never
-# picks up runtime state (rendered *.env, container data dirs) that lives
-# alongside the repo content on the remote. sidecar-compose.yaml is a repo-root
-# file that service compose files reference via `extends: ../sidecar-compose.yaml`,
-# so it must always be present even on a single-service run.
+# Resolve jj's absolute path up front rather than relying on the command
+# module's PATH. jj is a standalone binary (unlike git, which macOS also ships
+# at /usr/bin/git as a fallback), so a run whose environment lacks the Homebrew
+# / cargo bin dir -- e.g. one not wrapped in `direnv exec .` -- would otherwise
+# fail with "No such file or directory: jj". Search the ambient PATH first, then
+# the usual install locations (Apple Silicon Homebrew, Intel Homebrew, cargo),
+# and fail with a clear message if none has it.
+- name: Locate the jj executable on the controller
+  ansible.builtin.shell: >-
+    command -v jj
+    || for c in /opt/homebrew/bin/jj /usr/local/bin/jj "$HOME/.cargo/bin/jj"; do
+         [ -x "$c" ] && { echo "$c"; exit 0; };
+       done;
+    exit 1
+  delegate_to: localhost
+  changed_when: false
+  check_mode: false
+  register: _jj_bin
+  when: _sync_dirs | length > 0
+
+- name: Fail with a clear message when jj is not installed on the controller
+  ansible.builtin.fail:
+    msg: >-
+      Could not find the `jj` executable on the Ansible controller. This
+      playbook enumerates files to sync via jujutsu. Install jj (e.g.
+      `brew install jj`) or run the playbook in an environment where jj is on
+      PATH.
+  when:
+    - _sync_dirs | length > 0
+    - _jj_bin.rc | default(1) != 0
+
+# jj is the source of truth for *which* files to copy (this repo is a
+# jujutsu-colocated checkout, and the plain-git index can drift out of sync
+# with jj's tracked set). `jj file list` reports only version-controlled files,
+# so it never picks up runtime state (rendered *.env, container data dirs) that
+# lives alongside the repo content on the remote. --ignore-working-copy keeps it
+# a fast read-only query. Path arguments resolve relative to CWD, so this must
+# run with chdir at the repo root (playbook_dir). sidecar-compose.yaml is a
+# repo-root file that service compose files reference via
+# `extends: ../sidecar-compose.yaml`, so it must always be present even on a
+# single-service run. Note: jj emits a harmless "No matching entries" warning on
+# stderr (exit 0) for any candidate dir with no tracked files.
 - name: Enumerate tracked files for the selected services
   ansible.builtin.command:
-    argv: "{{ ['git', 'ls-files', '--'] + _sync_dirs + ['sidecar-compose.yaml'] }}"
+    argv: "{{ [_jj_bin.stdout | trim, 'file', 'list', '--ignore-working-copy', '--'] + _sync_dirs + ['sidecar-compose.yaml'] }}"
     chdir: "{{ playbook_dir }}"
   delegate_to: localhost
   changed_when: false
