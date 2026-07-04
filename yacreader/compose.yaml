@@ -26,9 +26,12 @@ services:
       - PGID=100
       - TZ=America/Los_Angeles
     volumes:
+      - comics-parent:/comics
       - /volume1/config/yacreader:/config
-      - /volume1/Media/ebooks/Comics:/comics
+      - /volume1/Media/ebooks/Comics:/comics/blob
+      - /volume1/Backups/Dropbox/Comics:/comics/void
     restart: unless-stopped
 
 volumes:
   tailscale-data:
+  comics-parent:
