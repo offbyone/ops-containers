@@ -24,6 +24,15 @@ services:
     network_mode: "service:sidecar"
     volumes:
       - changedetection-data:/datastore
+    environment:
+      # Use the sockpuppetbrowser (Playwright protocol) for JS-rendered fetches.
+      # The browser shares the sidecar's network namespace, so it is reachable
+      # on localhost rather than by container name.
+      - PLAYWRIGHT_DRIVER_URL=ws://127.0.0.1:3000
+    # changedetection must wait for the browser to be up before starting.
+    depends_on:
+      browser-sockpuppet-chrome:
+        condition: service_started
     # Configurable proxy list support, see https://github.com/dgtlmoon/changedetection.io/wiki/Proxy-configuration#proxy-list-support
     #        - ./proxies.json:/datastore/proxies.json
 
@@ -44,7 +53,7 @@ services:
     #             https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.proxy
     #
     #       Alternative Playwright URL, do not use "'s or 's!
-    #      - PLAYWRIGHT_DRIVER_URL=ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true
+    #       (enabled above via PLAYWRIGHT_DRIVER_URL over the shared sidecar namespace)
     #
     #       Playwright proxy settings playwright_proxy_server, playwright_proxy_bypass, playwright_proxy_username, playwright_proxy_password
     #
@@ -71,51 +80,27 @@ services:
 
     # Comment out ports: when using behind a reverse proxy , enable networks: etc.
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
-    # Used for fetching pages via WebDriver+Chrome where you need Javascript support.
-    # Now working on arm64 (needs testing on rPi - tested on Oracle ARM instance)
-    # replace image with seleniarm/standalone-chromium:4.0.0-20211213
-
-    # If WEBDRIVER or PLAYWRIGHT are enabled, changedetection container depends on that
-    # and must wait before starting (substitute "browser-chrome" with "playwright-chrome" if last one is used)
-    #    depends_on:
-    #        browser-chrome:
-    #            condition: service_started
-
-    #    browser-chrome:
-    #        hostname: browser-chrome
-    #        image: selenium/standalone-chrome-debug:3.141.59
-    #        environment:
-    #            - VNC_NO_PASSWORD=1
-    #            - SCREEN_WIDTH=1920
-    #            - SCREEN_HEIGHT=1080
-    #            - SCREEN_DEPTH=24
-    #        volumes:
-    #            # Workaround to avoid the browser crashing inside a docker container
-    #            # See https://github.com/SeleniumHQ/docker-selenium#quick-start
-    #            - /dev/shm:/dev/shm
-    #        restart: always
-
-    # Used for fetching pages via Playwright+Chrome where you need Javascript support.
-
-    #    playwright-chrome:
-    #        hostname: playwright-chrome
-    #        image: browserless/chrome
-    #        restart: always
-    #        environment:
-    #            - SCREEN_WIDTH=1920
-    #            - SCREEN_HEIGHT=1024
-    #            - SCREEN_DEPTH=16
-    #            - ENABLE_DEBUGGER=false
-    #            - PREBOOT_CHROME=true
-    #            - CONNECTION_TIMEOUT=300000
-    #            - MAX_CONCURRENT_SESSIONS=10
-    #            - CHROME_REFRESH_TIME=600000
-    #            - DEFAULT_BLOCK_ADS=true
-    #            - DEFAULT_STEALTH=true
-    #
-    #             Ignore HTTPS errors, like for self-signed certs
-    #            - DEFAULT_IGNORE_HTTPS_ERRORS=true
+  # Sockpuppetbrowser is Chrome wrapped in an API for fast fetching of web pages
+  # via the Playwright protocol. It shares the sidecar's network namespace, so
+  # changedetection reaches it on ws://127.0.0.1:3000 (see PLAYWRIGHT_DRIVER_URL).
+  browser-sockpuppet-chrome:
+    image: dgtlmoon/sockpuppetbrowser:latest
+    container_name: changedetection-browser
+    network_mode: "service:sidecar"
+    restart: always
+    # SYS_ADMIN might be more than strictly required, but it is often needed for
+    # Chrome/puppeteer inside a container. See
+    # https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-gitlabci
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1024
+      - SCREEN_DEPTH=16
+      - MAX_CONCURRENT_CHROME_PROCESSES=10
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
