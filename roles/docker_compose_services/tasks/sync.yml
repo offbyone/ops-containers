@@ -80,6 +80,30 @@
          | list }}
   when: _sync_dirs | length > 0
 
+# The plain copy loop below does not create intermediate parent directories, so
+# derive the unique set of directories that the tracked files live in and create
+# them up front. Map each file to its dirname, drop any empty results (repo-root
+# files like sidecar-compose.yaml have no directory component), and dedupe.
+- name: Compute the needed directories on the remote
+  ansible.builtin.set_fact:
+    _sync_directories: >-
+      {{ _sync_files
+         | map('dirname')
+         | reject('equalto', '')
+         | unique
+         | list }}
+  when: _sync_dirs | length > 0
+
+- name: Ensure the service directories exist on the remote
+  ansible.builtin.file:
+    path: "{{ repo_path }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ _sync_directories | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+  when: _sync_dirs | length > 0
+
 # copy is idempotent via checksum and renders real per-file content under
 # --diff, so there is no need for the rsync itemize-changes summary machinery.
 # It never deletes, which preserves the remote's runtime state (whole-service

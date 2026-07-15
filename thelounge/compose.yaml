@@ -1,0 +1,32 @@
+services:
+  thelounge:
+    image: ghcr.io/thelounge/thelounge:latest
+    container_name: thelounge
+    network_mode: service:sidecar
+    restart: always
+    volumes:
+      - thelounge:/var/opt/thelounge # uses a named volume
+      - ./config.js:/var/opt/thelounge/config.js:ro # overlay our config
+
+  sidecar:
+    restart: unless-stopped
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .simple-sidecar
+    hostname: irc
+
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:9000"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:9000"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
+volumes:
+  thelounge:
+  tailscale-data:
