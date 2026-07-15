@@ -1,5 +1,4 @@
----
-# Docker Compose file for running paperless from the docker container registry.
+# Docker Compose file for running paperless from the Docker Hub.
 # This file contains everything paperless needs to run.
 # Paperless supports amd64, arm and arm64 hardware.
 #
@@ -15,10 +14,6 @@
 # configurations:
 #
 # - Instead of SQLite (default), PostgreSQL is used as the database server.
-# - Apache Tika and Gotenberg servers are started with paperless and paperless
-#   is configured to use these services. These provide support for consuming
-#   Office documents (Word, Excel, PowerPoint and their LibreOffice counter-
-#   parts).
 #
 # To install and update paperless with this file, do the following:
 #
@@ -43,7 +38,7 @@ configs:
 
 services:
   broker:
-    image: docker.io/library/redis:8
+    image: docker.io/valkey/valkey:9-alpine
     restart: unless-stopped
     network_mode: service:sidecar
     volumes:
