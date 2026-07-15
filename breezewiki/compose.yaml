@@ -20,7 +20,7 @@ services:
 
   breezewiki:
     container_name: breezewiki
-    image: ghcr.io/offbyone/breezewiki:main
+    image: quay.io/pussthecatorg/breezewiki:latest
     restart: unless-stopped
     network_mode: service:sidecar
     volumes:
