@@ -28,8 +28,10 @@ services:
     container_name: bichon
     working_dir: /data
     environment:
-      - BICHON_LOG_LEVEL=info
+      - BICHON_LOG_LEVEL=debug
       - BICHON_ROOT_DIR=/data
+      - BICHON_LOG_TO_FILE=true
+      - BICHON_MAX_SERVER_LOG_FILES=20
     healthcheck:
       test:
         ["CMD-SHELL", "curl -fs http://localhost:15630/api/status || exit 1"]
