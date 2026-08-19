@@ -12,7 +12,7 @@ configs:
       "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":true}}
 services:
   sidecar:
-    restart: unless-stopped
+    restart: always
     extends:
       file: ../sidecar-compose.yaml
       service: .simple-sidecar

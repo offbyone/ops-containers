@@ -30,7 +30,7 @@ configs:
 
 services:
   sidecar:
-    restart: unless-stopped
+    restart: always
     extends:
       file: ../sidecar-compose.yaml
       service: .simple-sidecar
