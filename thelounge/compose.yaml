@@ -2,6 +2,13 @@ services:
   thelounge:
     image: ghcr.io/thelounge/thelounge:latest
     container_name: thelounge
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     network_mode: service:sidecar
     restart: always
     volumes:

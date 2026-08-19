@@ -23,6 +23,13 @@ services:
     image: ghcr.io/atuinsh/atuin:18.18.0
     network_mode: "service:sidecar"
     restart: always
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "atuin"
+        labels: LOG_EXPORT
     depends_on:
       - db
     command: start

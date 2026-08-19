@@ -21,6 +21,13 @@ services:
   service:
     image: lscr.io/linuxserver/sonarr:latest
     network_mode: "service:sidecar"
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     restart: unless-stopped
     volumes:
       - blob-media:/media
@@ -28,8 +35,6 @@ services:
     environment:
       - PGID=1000
       - PUID=1000
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
   exporter:
     image: ghcr.io/onedr0p/exportarr:latest
     command: sonarr

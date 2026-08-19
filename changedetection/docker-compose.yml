@@ -21,6 +21,13 @@ services:
   changedetection:
     image: ghcr.io/dgtlmoon/changedetection.io
     container_name: changedetection
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     network_mode: "service:sidecar"
     volumes:
       - changedetection-data:/datastore
@@ -80,8 +87,6 @@ services:
 
     # Comment out ports: when using behind a reverse proxy , enable networks: etc.
     restart: always
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   # Sockpuppetbrowser is Chrome wrapped in an API for fast fetching of web pages
   # via the Playwright protocol. It shares the sidecar's network namespace, so

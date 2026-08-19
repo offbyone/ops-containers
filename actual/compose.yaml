@@ -20,6 +20,13 @@ services:
 
   actual_server:
     image: docker.io/actualbudget/actual-server:latest
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "actual"
+        labels: LOG_EXPORT
     network_mode: service:sidecar
     environment:
       # Uncomment any of the lines below to set configuration options.

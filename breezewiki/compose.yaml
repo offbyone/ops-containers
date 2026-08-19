@@ -21,6 +21,13 @@ services:
   breezewiki:
     container_name: breezewiki
     image: quay.io/pussthecatorg/breezewiki:latest
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     restart: unless-stopped
     network_mode: service:sidecar
     volumes:

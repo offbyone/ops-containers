@@ -20,6 +20,13 @@ services:
   miniflux:
     image: miniflux/miniflux:latest
     network_mode: service:sidecar
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     depends_on:
       db:
         condition: service_healthy

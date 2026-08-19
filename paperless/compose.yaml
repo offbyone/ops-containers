@@ -55,6 +55,12 @@ services:
       POSTGRES_PASSWORD: paperless
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        labels: LOG_EXPORT
     restart: unless-stopped
     network_mode: service:sidecar
     depends_on:

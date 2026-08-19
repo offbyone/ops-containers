@@ -6,6 +6,14 @@
 # https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
 #
 # The compose file on main may not be compatible with the latest release.
+x-logdriver: &logdriver
+  labels:
+    LOG_EXPORT: "1"
+  logging:
+    driver: journald
+    options:
+      tag: "{{.Name}}"
+      labels: LOG_EXPORT
 
 name: immich
 
@@ -32,6 +40,7 @@ services:
   server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    <<: *logdriver
     # extends:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
@@ -54,6 +63,7 @@ services:
     # For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    <<: *logdriver
     # extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
     #   file: hwaccel.ml.yml
     #   service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
@@ -70,6 +80,7 @@ services:
     network_mode: service:sidecar
     container_name: immich_redis
     image: docker.io/valkey/valkey:8-bookworm@sha256:ff21bc0f8194dc9c105b769aeabf9585fea6a8ed649c0781caeac5cb3c247884
+    <<: *logdriver
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always

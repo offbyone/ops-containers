@@ -31,6 +31,13 @@ services:
   web:
     image: ghcr.io/offbyone/gallery-dl-app:latest
     container_name: gallery-dl-web
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     ports:
       - "34100:8000"
     environment:
@@ -48,6 +55,13 @@ services:
   worker:
     image: ghcr.io/offbyone/gallery-dl-app:latest
     container_name: gallery-dl-worker
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     # The image bakes in an HTTP healthcheck against :8000 (for the web
     # service). The worker doesn't serve HTTP, so that probe can never pass.
     # `compose up --wait` also refuses to wait on a container with no

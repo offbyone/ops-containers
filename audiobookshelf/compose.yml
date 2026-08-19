@@ -20,6 +20,13 @@ services:
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
     network_mode: service:sidecar
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "audiobookshelf"
+        labels: LOG_EXPORT
     volumes:
       - /mnt/media/audio/books:/audiobooks
       - /mnt/media/audio/podcasts:/podcasts

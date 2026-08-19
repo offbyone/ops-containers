@@ -21,6 +21,13 @@ services:
 
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "seerr"
+        labels: LOG_EXPORT
     init: true
     container_name: seerr
     environment:

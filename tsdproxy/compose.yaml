@@ -1,6 +1,13 @@
 services:
   tsdproxy:
     image: almeidapaulopt/tsdproxy:2
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "tsdproxy"
+        labels: LOG_EXPORT
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - datadir:/data

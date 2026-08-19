@@ -23,6 +23,12 @@ services:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
     network_mode: service:sidecar
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        labels: LOG_EXPORT
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}

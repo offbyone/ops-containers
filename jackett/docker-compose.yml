@@ -22,6 +22,13 @@ services:
   jackett:
     image: lscr.io/linuxserver/jackett:latest
     network_mode: "service:sidecar"
+    labels:
+      LOG_EXPORT: "1"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}"
+        labels: LOG_EXPORT
     restart: always
     volumes:
       - blob-media:/media
@@ -29,8 +36,6 @@ services:
     environment:
       - PGID=1000
       - PUID=1000
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
 volumes:
   tailscale-data:
