@@ -1,0 +1,34 @@
+configs:
+  ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true},"80":{"HTTP":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:4433"}}},
+          "$${TS_CERT_DOMAIN}:80":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:4433"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
+services:
+  sidecar:
+    restart: always
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .simple-sidecar
+    hostname: hister
+
+  hister:
+    image: ghcr.io/asciimoo/hister:latest
+    container_name: hister
+    user: "1000:1000"
+    restart: always
+    volumes:
+      - /volume1/Backups/hister:/hister/data
+    environment:
+      - HISTER__SERVER__ADDRESS=0.0.0.0:4433
+      - HISTER__SERVER__BASE_URL=https://hister.camel-tortoise.ts.net
+    network_mode: service:sidecar
+
+volumes:
+  tailscale-data:

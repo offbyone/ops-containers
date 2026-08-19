@@ -10,6 +10,8 @@ services:
     compose_file: docker-compose.yml
   - name: bichon
     compose_file: compose.yaml
+  - name: hister
+    compose_file: compose.yaml
   - name: prometheus
     compose_file: docker-compose.yml
   - name: victoria-logs
