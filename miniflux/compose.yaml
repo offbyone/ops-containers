@@ -32,9 +32,23 @@ services:
         condition: service_healthy
     env_file:
       - .env.local
+    secrets:
+      - oauth2_client_id
+      - oauth2_client_secret
     environment:
+      - DISABLE_LOCAL_AUTH=1
+      - OAUTH2_CLIENT_ID_FILE=/run/secrets/oauth2_client_id
+      - OAUTH2_CLIENT_SECRET_FILE=/run/secrets/oauth2_client_secret
+      - OAUTH2_OIDC_DISCOVERY_ENDPOINT=https://id.offby1.net
+      - OAUTH2_PROVIDER=oidc
+      - OAUTH2_REDIRECT_URL=https://miniflux.camel-tortoise.ts.net/oauth2/oidc/callback
+      - INTEGRATION_ALLOW_PRIVATE_NETWORKS=1
+      - LOG_FORMAT=json
+      - METRICS_ALLOWED_NETWORKS=100.64.0.0/10
+      - METRICS_COLLECTOR=1
+      - POLLING_FREQUENCY=30
+      - POLLING_SCHEDULER=entry_frequency
       - RUN_MIGRATIONS=1
-      - CREATE_ADMIN=1
   db:
     image: postgres:17-alpine
     network_mode: service:sidecar
@@ -51,3 +65,8 @@ services:
 volumes:
   miniflux-db:
   tailscale-data:
+secrets:
+  oauth2_client_id:
+    file: ./oauth2_client_id.txt
+  oauth2_client_secret:
+    file: ./oauth2_client_secret.txt
