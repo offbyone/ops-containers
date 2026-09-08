@@ -47,7 +47,6 @@ services:
       - METRICS_ALLOWED_NETWORKS=100.64.0.0/10
       - METRICS_COLLECTOR=1
       - POLLING_FREQUENCY=30
-      - POLLING_SCHEDULER=entry_frequency
       - RUN_MIGRATIONS=1
   db:
     image: postgres:17-alpine
