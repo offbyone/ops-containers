@@ -19,6 +19,9 @@ services:
   - name: cobalt
     compose_file: docker-compose.yml
     systemd: true
+  - name: dmarcguard
+    compose_file: compose.yaml
+    systemd: true
   - name: flaresolverr
     compose_file: compose.yaml
     systemd: true

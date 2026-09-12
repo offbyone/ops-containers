@@ -43,6 +43,9 @@ metrics_unifi_pass: ENC[AES256_GCM,data:2TpHJdu+suoztu3iG9i2a3U85w==,iv:AAujqupN
 metrics_poller_tag_unencrypted: latest
 metrics_poller_debug_unencrypted: "false"
 metrics_poller_save_dpi_unencrypted: "false"
+dmarc:
+    imap_username: ENC[AES256_GCM,data:KVNeFE6pLXAS0ghPR0y60Zo=,iv://+lo1IThUg0ciKBZrxnlQ/AJLLof0K5VNMw/KaiA/M=,tag:tLf0v+zr6X+GyeVllwBOjA==,type:str]
+    imap_password: ENC[AES256_GCM,data:O/4lUysB3sf+DnzlLT1FNQ==,iv:1f23s1R6uEgQq1TV5LOnGoT9mChCGg+MeJuM1ouI0Ao=,tag:TigtdFQEFme3I+QxLjvWEQ==,type:str]
 sops:
     age:
         - recipient: age1w0c42y4lgr46r8sq76h32ehk3gkuwp2e2e92894k0c3v9hjuksdsq6sgdx
@@ -54,7 +57,7 @@ sops:
             OW40TlRmNkM5cld2SnN4bVBpaUMzRlEKPW0w6W5Wr53HAga2inNGbzBJn9cvA5iV
             9cG3tU8KkMPo3hksK+skO0ckHmyXmE8tPdxFV7dtoZJtqs3Vnl9I4A==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-05-31T18:00:59Z"
-    mac: ENC[AES256_GCM,data:RbfHTiV0f+yRSalL55kKf9pNuLFDJXvgU9wTXgaDdu1Y+pqccKfCA7muWafDMSIoI5F4hZDRPUGHfevcLSV/Bueg2UpiraeZgFaDnWVklLmvcnGUXKlLf4PPBvyTM4k3rAQOZL6fNbN+sUvY53jKoOK8/kaSXmWc4v3r7sI4Ofc=,iv:3yw/qdmnvM0XehgAWN4jZeKWc+xcA8HGdLg4ClkIAhU=,tag:5cDMx7+5PORf8Iz8cRnkjQ==,type:str]
+    lastmodified: "2026-09-12T16:01:54Z"
+    mac: ENC[AES256_GCM,data:VQMSayc/TlwvRVFgJsFCfZMctHsgAuyWae7u2kQgxmMl6/5JKoItblYjo/1TruAIUsvmpazjdgrtioTpOnGTJ/nnhsXcdAlkTDKP0CJKBiuSoBYwnoA2iueAvLYJ1SSylV6cKAweDolfKCQ7KHdamJXdcQcIaQ8m0tKunHjdUh4=,iv:YHv/gb8OE8bPxQNW1MRrHi8MHmm+pi6jVebmI58+omU=,tag:HLdVouo9tqXTlFwytNzN+A==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.12.2
