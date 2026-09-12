@@ -79,7 +79,7 @@ services:
   redis:
     network_mode: service:sidecar
     container_name: immich_redis
-    image: docker.io/valkey/valkey:8-bookworm@sha256:ff21bc0f8194dc9c105b769aeabf9585fea6a8ed649c0781caeac5cb3c247884
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     <<: *logdriver
     healthcheck:
       test: redis-cli ping || exit 1
@@ -87,7 +87,7 @@ services:
 
   database:
     container_name: immich_postgres
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
     network_mode: service:sidecar
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
