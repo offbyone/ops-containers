@@ -1,0 +1,38 @@
+configs:
+  ts-serve:
+    content: |
+      {
+        "TCP":{
+          "443":{"HTTPS":true},
+          "80":{"HTTP":true}
+        },
+        "Web":{
+          "$${TS_CERT_DOMAIN}:443": {
+            "Handlers":{ "/": {"Proxy":"http://127.0.0.1:9000"}}
+          },
+          "$${TS_CERT_DOMAIN}:80": {
+            "Handlers":{"/": {"Proxy":"http://127.0.0.1:9000"}}
+          }
+        },
+        "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}
+      }
+
+services:
+  sidecar:
+    restart: always
+    extends:
+      file: ../sidecar-compose.yaml
+      service: .simple-sidecar
+    hostname: "portainer-blob"
+
+  portainer-agent:
+    image: "portainer/agent:lts"
+    restart: always
+    network_mode: "service:sidecar"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "/volume1/@docker/volumes:/volume1/@docker/volumes"
+      - /volume1/homes/offby1/ops-containers:/volume1/homes/offby1/ops-containers
+
+volumes:
+  tailscale-data:
