@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     volumes:
       - blob-media:/media
-      - radarr-config:/config
+      - radarr-config-local:/config
     environment:
       - PGID=1000
       - PUID=1000
@@ -57,9 +57,15 @@ volumes:
       type: cifs
       device: //blob.camel-tortoise.ts.net/Media
       o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},vers=3.0,iocharset=utf8,file_mode=0777,dir_mode=0777,nounix,noserverino
-  radarr-config:
+  radarr-config-local:
     driver: local
     driver_opts:
-      type: cifs
-      device: //blob.camel-tortoise.ts.net/config/radarr/
-      o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},vers=3.0,iocharset=utf8,file_mode=0777,dir_mode=0777,nounix,noserverino
+      type: none
+      device: /etc/radarr
+      o: bind
+  # radarr-config:
+  #   driver: local
+  #   driver_opts:
+  #     type: cifs
+  #     device: //blob.camel-tortoise.ts.net/config/radarr/
+  #     o: username=${BLOB_USERNAME},password=${BLOB_PASSWORD},vers=3.0,iocharset=utf8,file_mode=0777,dir_mode=0777,nounix,noserverino
