@@ -1,0 +1,24 @@
+---
+# Install backups for the service, if requested
+# The service configuration should have a `backup:` dict with `source:` and `target:` in it.
+
+- name: gather all services that use backups
+  ansible.builtin.set_fact:
+    _backup_services: >-
+      {{ (services | default([]) if not service
+          else services | default([]) | selectattr('name', 'equalto', service) | list)
+          | rejectattr('backups', 'undefined')
+          | selectattr('backups')
+          | list
+          }}
+
+# - name: debug - show the services with backups
+#   ansible.builtin.debug:
+#     msg: "Backup services on {{ inventory_hostname }}: {{_backup_services}}"
+
+- name: Manage each backup service config
+  ansible.builtin.include_tasks: backup_service.yml
+  loop: "{{ _backup_services }}"
+  loop_control:
+    loop_var: svc
+    label: "{{ svc.name }} backups"

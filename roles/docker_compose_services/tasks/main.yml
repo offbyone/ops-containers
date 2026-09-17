@@ -27,3 +27,10 @@
   tags:
     - deploy
     - services
+
+- name: Manage backup configurations
+  ansible.builtin.import_tasks: backups.yml
+  tags:
+    - deploy
+    - services
+    - backup

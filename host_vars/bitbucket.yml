@@ -54,6 +54,9 @@ services:
   - name: radarr
     compose_file: docker-compose.yml
     systemd: true
+    backups:
+      source: /etc/radarr
+      target: radarr
   # - name: radicale
   #   compose_file: compose.yml
   - name: readarr
@@ -61,6 +64,9 @@ services:
   - name: sonarr
     compose_file: compose.yml
     systemd: true
+    backups:
+      source: /etc/sonarr
+      target: sonarr
   - name: tandoor
     compose_file: compose.yml
   - name: thelounge

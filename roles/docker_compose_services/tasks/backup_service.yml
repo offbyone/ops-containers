@@ -1,0 +1,13 @@
+---
+# Per-service backup management
+- name: "Derive service facts for {{ svc.name }}"
+  ansible.builtin.set_fact:
+    _svc_backup_file: "{{ backup_config_path }}/{{ svc.name }}.conf"
+    _svc_backup_source: "{{ svc.backups.source }}"
+    _svc_backup_target: "{{ svc.backups.target }}"
+
+- name: "Install service backup config for {{ svc.name }}"
+  ansible.builtin.template:
+    src: backup-config.conf.j2
+    dest: "{{ _svc_backup_file }}"
+  become: true
