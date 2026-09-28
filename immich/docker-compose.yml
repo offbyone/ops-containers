@@ -71,6 +71,10 @@ services:
       - model-cache:/cache
     env_file:
       - .env
+    environment:
+      # see https://github.com/immich-app/immich/issues/30729
+      # disable's onnx telemetry
+      ORT_DISABLE_TELEMETRY: "1"
     network_mode: service:sidecar
     restart: always
     healthcheck:
@@ -82,7 +86,7 @@ services:
     image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     <<: *logdriver
     healthcheck:
-      test: redis-cli ping || exit 1
+      test: redis-cli ping | grep -q PONG || exit 1
     restart: always
 
   database:
